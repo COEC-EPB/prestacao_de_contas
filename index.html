@@ -70,7 +70,15 @@
     </div>
 
     <div class="row">
-      <div>
+     <div>
+        <label>Nome *</label>
+        <input id="nome" name="nome" type="text" required>
+      </div>
+     <div>
+        <label>Email *</label>
+        <input id="email" name="email" type="text" required>
+      </div> 
+     <div>
         <label>Matrícula *</label>
         <input id="matricula" name="matricula" type="text" required>
       </div>
@@ -149,6 +157,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
   const btnSubmit = document.getElementById("btnSubmit");
 
   const nome = document.getElementById("nome");
+  const email = document.getElementById("email");
   const regional = document.getElementById("regional");
   const polo = document.getElementById("polo");
   const matricula = document.getElementById("matricula");
@@ -197,6 +206,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
       // --- cria payload
       const payload = {
         nome: nome.value.trim(),
+        email: email.value.trim(),
         regional: regional.value,
         polo: polo.value,
         matricula: matricula.value.trim(),
