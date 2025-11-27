@@ -44,13 +44,19 @@
 <div class="card">
   <h1>PRESTAÇÃO DE CONTAS - ADD</h1>
 
-  <!-- FORMULÁRIO USANDO WEB3FORMS -->
-  <form id="addForm" autocomplete="off" method="POST" action="https://api.web3forms.com/submit" enctype="multipart/form-data">
+  <!-- FORMULÁRIO WEB3FORMS -->
+  <form id="addForm" action="https://api.web3forms.com/submit" method="POST">
 
+    <!-- Chave de acesso Web3Forms -->
     <input type="hidden" name="access_key" value="89885c8d-355e-4b5f-8fe6-d2dfd2e7aff9">
-    <input type="hidden" name="subject" value="Prestação de Contas - ADD">
-    <input type="hidden" name="redirect" value="https://web3forms.com/success">
 
+    <!-- Campo automático que envia o conteúdo do CSV como texto -->
+    <input type="hidden" name="csv_content" id="csv_content">
+
+    <!-- Email destino -->
+    <input type="hidden" name="to" value="pedro.fillype@energisa.com.br">
+
+    <!-- Campos reais -->
     <div>
       <label>Nome *</label>
       <input id="nome" name="nome" type="text" required>
@@ -60,8 +66,7 @@
       <div>
         <label>Regional *</label>
         <select id="regional" name="regional" required>
-          <option value="">Selecione...</option>
-          <option>LESTE</option><option>CENTRO</option><option>OESTE</option>
+          <option value="">Selecione...</option><option>LESTE</option><option>CENTRO</option><option>OESTE</option>
         </select>
       </div>
       <div>
@@ -134,127 +139,95 @@
     </div>
 
     <div>
-      <label>Observação sobre a refeição (opcional)</label>
+      <label>Observação (opcional)</label>
       <textarea id="observacao" name="observacao" rows="3"></textarea>
     </div>
 
-    <!-- ONDE O CSV SERÁ ANEXADO -->
-    <input type="file" id="csvfile" name="csvfile" style="display:none">
-
-    <button id="btnSubmit" type="submit" style="margin-top:10px">
-      Enviar (E-mail + CSV)
-    </button>
+    <button id="btnSubmit" type="submit">Enviar (E-mail + CSV)</button>
 
     <p class="muted">O e-mail será enviado para: <b>pedro.fillype@energisa.com.br</b></p>
   </form>
 </div>
 
 <script>
-function slugifyName(s){return String(s||"").trim().replace(/\s+/g,"_").replace(/[^\w\-]/g,"");}
+/* GEOLOCATION */
+document.getElementById("btnGeo").addEventListener("click", ()=>{
+  if(!navigator.geolocation){ alert("Geolocalização não suportada."); return; }
 
+  const btn = document.getElementById("btnGeo");
+  btn.innerText = "Capturando...";
+
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const lat = pos.coords.latitude.toFixed(6);
+    const lng = pos.coords.longitude.toFixed(6);
+    document.getElementById("geo").value = `${lat}, ${lng}`;
+    btn.innerText = "Localização OK!";
+    btn.style.background = "#43a047";
+  },()=>{
+    btn.innerText="Obter Localização";
+    alert("Ative o GPS e tente novamente.");
+  },{enableHighAccuracy:true,timeout:10000});
+});
+
+/* CSV */
 function gerarCSV(obj){
-  const headers = ["timestamp","nome","regional","polo","matricula","datauso",
+  const headers = [
+    "timestamp","nome","regional","polo","matricula","datauso",
     "tiporefeicao","horario","localidade","localizacao_gps","sequencia",
-    "osrrss","numeroadd","observacao"];
+    "osrrss","numeroadd","observacao"
+  ];
 
   const linha = [
     obj.timestamp,obj.nome,obj.regional,obj.polo,obj.matricula,obj.datauso,
-    obj.tiporefeicao,obj.horario,obj.localidade,obj.localizacao_gps,obj.sequencia,
-    obj.osrrss,obj.numeroadd,obj.observacao
+    obj.tiporefeicao,obj.horario,obj.localidade,obj.localizacao_gps,
+    obj.sequencia,obj.osrrss,obj.numeroadd,obj.observacao
   ];
 
-  const q = v=>`"${String(v??"").replace(/"/g,'""')}"`;
+  const q = v => `"${String(v ?? "").replace(/"/g,'""')}"`;
   return headers.map(q).join(",") + "\n" + linha.map(q).join(",");
 }
 
-function baixarCSV(csvString,filename){
-  const blob=new Blob(["\uFEFF"+csvString],{type:"text/csv;charset=utf-8;"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
-  a.href=url;a.download=filename;document.body.appendChild(a);
-  a.click();a.remove();
-  return blob;
+/* Download CSV */
+function baixarCSV(csvString, filename){
+  const blob = new Blob(["\uFEFF"+csvString],{type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
 }
 
-document.addEventListener("DOMContentLoaded", ()=>{
+/* SUBMIT */
+document.getElementById("addForm").addEventListener("submit", (e)=>{
+  const btn = document.getElementById("btnSubmit");
+  btn.innerText = "Processando...";
+  btn.disabled = true;
 
-  const form = document.getElementById("addForm");
-  const btnGeo = document.getElementById("btnGeo");
-  const btnSubmit = document.getElementById("btnSubmit");
+  const payload = {
+    timestamp:new Date().toISOString(),
+    nome: nome.value.trim(),
+    regional: regional.value,
+    polo: polo.value,
+    matricula: matricula.value.trim(),
+    datauso: datauso.value,
+    tiporefeicao: tiporefeicao.value,
+    horario: horario.value,
+    localidade: localidade.value.trim(),
+    localizacao_gps: geo.value,
+    sequencia: sequencia.value.trim(),
+    osrrss: osrrss.value.trim(),
+    numeroadd: numeroadd.value.trim(),
+    observacao: observacao.value.trim()
+  };
 
-  const nome = document.getElementById("nome");
-  const regional = document.getElementById("regional");
-  const polo = document.getElementById("polo");
-  const matricula = document.getElementById("matricula");
-  const datauso = document.getElementById("datauso");
-  const tiporefeicao = document.getElementById("tiporefeicao");
-  const horario = document.getElementById("horario");
-  const localidade = document.getElementById("localidade");
-  const geo = document.getElementById("geo");
-  const sequencia = document.getElementById("sequencia");
-  const osrrss = document.getElementById("osrrss");
-  const numeroadd = document.getElementById("numeroadd");
-  const observacao = document.getElementById("observacao");
-  const csvfile = document.getElementById("csvfile");
+  const csv = gerarCSV(payload);
+  const filename = `ADD_${payload.nome.replace(/\s+/g,"_")}_${payload.datauso}.csv`;
 
-  btnGeo.addEventListener("click", ()=>{
-    if(!navigator.geolocation){ alert("Geolocalização não suportada."); return; }
-    btnGeo.innerText="Capturando...";
-    navigator.geolocation.getCurrentPosition(pos=>{
-      const lat = pos.coords.latitude.toFixed(6);
-      const lng = pos.coords.longitude.toFixed(6);
-      geo.value = `${lat}, ${lng}`;
-      btnGeo.innerText="Localização OK!";
-      btnGeo.style.background="#43a047";
-    },()=>{
-      alert("Ative o GPS e tente novamente.");
-      btnGeo.innerText="Obter Localização";
-    },{enableHighAccuracy:true,timeout:10000});
-  });
+  baixarCSV(csv, filename);
 
-  form.addEventListener("submit", e=>{
-    e.preventDefault();
+  // Coloca o CSV como texto para enviar no e-mail
+  document.getElementById("csv_content").value = csv;
 
-    btnSubmit.disabled=true;
-    btnSubmit.innerText="Processando...";
-
-    const payload = {
-      timestamp:new Date().toISOString(),
-      nome:nome.value.trim(),
-      regional:regional.value,
-      polo:polo.value,
-      matricula:matricula.value.trim(),
-      datauso:datauso.value,
-      tiporefeicao:tiporefeicao.value,
-      horario:horario.value,
-      localidade:localidade.value.trim(),
-      localizacao_gps:geo.value,
-      sequencia:sequencia.value.trim(),
-      osrrss:osrrss.value.trim(),
-      numeroadd:numeroadd.value.trim(),
-      observacao:observacao.value.trim()
-    };
-
-    const csv = gerarCSV(payload);
-    const filename = `ADD_${slugifyName(payload.nome)}_${payload.timestamp.slice(0,10)}.csv`;
-
-    const blob = baixarCSV(csv, filename);
-
-    // Anexa o CSV ao formulário
-    const file = new File([blob], filename, { type: "text/csv" });
-    const dataTransfer = new DataTransfer();
-    dataTransfer.items.add(file);
-    csvfile.files = dataTransfer.files;
-
-    // agora envia de verdade pelo Web3Forms:
-    form.submit();
-
-    setTimeout(()=>{
-      btnSubmit.disabled=false;
-      btnSubmit.innerText="Enviar (E-mail + CSV)";
-    },2000);
-  });
-
+  btn.innerText = "Enviando...";
 });
 </script>
 
