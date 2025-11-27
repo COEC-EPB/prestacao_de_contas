@@ -6,37 +6,114 @@
 <title>Prestação de Contas - ADD</title>
 
 <style>
-  * { box-sizing: border-box; } 
-  body{font-family:"Segoe UI",Roboto,sans-serif;background:linear-gradient(135deg,#e3f2fd,#fff);
-       padding:24px;color:#333;margin:0;}
-  .card{max-width:900px;margin:18px auto;padding:20px;border-radius:12px;background:#fff;
-        box-shadow:0 6px 20px rgba(0,0,0,0.08);}
-  h1{text-align:center;color:#0d47a1;margin:6px 0 12px;font-size:20px;text-transform:uppercase;}
-  form{display:grid;gap:10px;}
-  label{font-weight:600;font-size:14px;margin-bottom:4px;display:block;}
-
-  input,select,textarea,button{
-    width:100%;padding:12px;border-radius:8px;border:1px solid #cfd8dc;
-    background:#f7f9fc;font-size:15px;outline:none;
-  }
-  input:focus,select:focus,textarea:focus{border-color:#1e88e5;background:#fff;}
-
-  button{background:#1e88e5;color:#fff;border:none;cursor:pointer;font-weight:700;transition:0.3s;}
-  button:hover{background:#1565c0;}
-
-  .row{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:15px;
-    margin-bottom:2px;
-  }
-  @media(max-width:720px){
-    .row{grid-template-columns:1fr;gap:10px;}
-    body{padding:12px;}
+  :root {
+    --energisa-blue: #0097CE;
+    --energisa-blue-dark: #0079a6;
+    --energisa-orange: #F36F21;
+    --bg-soft: #f4f9fc;
+    --text-dark: #333;
   }
 
-  .small{padding:8px;font-size:13px}
-  .muted{color:#666;font-size:13px;text-align:center}
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", Roboto, sans-serif;
+    background: var(--bg-soft);
+    padding: 24px;
+    color: var(--text-dark);
+    margin: 0;
+  }
+
+  /* Card */
+  .card {
+    max-width: 900px;
+    margin: 24px auto;
+    padding: 28px;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 6px 26px rgba(0,0,0,0.10);
+    border-top: 6px solid var(--energisa-orange);
+  }
+
+  /* Título */
+  h1 {
+    text-align: center;
+    color: var(--energisa-blue);
+    margin: 6px 0 20px;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+
+  /* Form */
+  form { display: grid; gap: 14px; }
+
+  label {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #cfd8dc;
+    background: #fbfcff;
+    font-size: 15px;
+    outline: none;
+    transition: 0.2s;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--energisa-blue);
+    background: #fff;
+    box-shadow: 0 0 0 2px rgba(0,151,206,0.20);
+  }
+
+  /* Button */
+  button {
+    background: var(--energisa-blue);
+    color: #fff;
+    border: none;
+    padding: 14px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 10px;
+    transition: 0.3s;
+  }
+  button:hover {
+    background: var(--energisa-blue-dark);
+  }
+
+  /* Botão pequeno */
+  .small {
+    padding: 10px;
+    font-size: 13px;
+    background: var(--energisa-orange);
+  }
+  .small:hover {
+    background: #d85e1c;
+  }
+
+  /* Grid responsivo */
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media(max-width: 720px) {
+    .row { grid-template-columns: 1fr; }
+    body { padding: 14px; }
+  }
+
+  .muted {
+    color: #666;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 6px;
+  }
 </style>
 </head>
 <body>
@@ -50,33 +127,39 @@
       <label>Nome *</label>
       <input id="nome" name="nome" type="text" required>
     </div>
+
     <div>
-        <label>Email *</label>
-        <input id="email" name="email" type="text" required>
-      </div> 
-     <div>
+      <label>Email *</label>
+      <input id="email" name="email" type="text" required>
+    </div>
+
     <div class="row">
       <div>
         <label>Regional *</label>
         <select id="regional" name="regional" required>
-          <option value="">Selecione...</option><option>LESTE</option><option>CENTRO</option><option>OESTE</option>
+          <option value="">Selecione...</option>
+          <option>LESTE</option><option>CENTRO</option><option>OESTE</option>
         </select>
       </div>
+
       <div>
         <label>Polo *</label>
         <select id="polo" name="polo" required>
           <option value="">Selecione...</option>
-          <option>João Pessoa</option><option>Itabaiana</option><option>Mamanguape</option><option>Borborema</option>
-          <option>Campina Grande</option><option>Monteiro</option><option>Guarabira</option><option>Esperança</option>
-          <option>Itaporanga</option><option>Sousa</option><option>Patos</option><option>Catolé do Rocha</option>
+          <option>João Pessoa</option><option>Itabaiana</option><option>Mamanguape</option>
+          <option>Borborema</option><option>Campina Grande</option><option>Monteiro</option>
+          <option>Guarabira</option><option>Esperança</option><option>Itaporanga</option>
+          <option>Sousa</option><option>Patos</option><option>Catolé do Rocha</option>
         </select>
       </div>
     </div>
 
     <div class="row">
+      <div>
         <label>Matrícula *</label>
         <input id="matricula" name="matricula" type="text" required>
       </div>
+
       <div>
         <label>Data do uso *</label>
         <input id="datauso" name="datauso" type="date" required>
@@ -92,6 +175,7 @@
           <option>EXTRA (APÓS DUAS HORAS DO FINAL DA ESCALA)</option>
         </select>
       </div>
+
       <div>
         <label>Horário *</label>
         <input id="horario" name="horario" type="time" required>
@@ -99,15 +183,16 @@
     </div>
 
     <div>
-      <label>Localidade em que foi usado o ADD *</label>
+      <label>Localidade *</label>
       <input id="localidade" name="localidade" type="text" required>
     </div>
 
     <div class="row">
       <div>
-        <label>Solicitar localização geográfica *</label>
+        <label>Solicitar Localização *</label>
         <button type="button" id="btnGeo" class="small">Obter Localização</button>
       </div>
+
       <div>
         <label>Coordenadas *</label>
         <input id="geo" name="localizacao_gps" type="text" placeholder="lat, lng" readonly required>
@@ -124,6 +209,7 @@
         <label>Número da OS / RR / SS (opcional)</label>
         <input id="osrrss" name="osrrss" type="text">
       </div>
+
       <div>
         <label>Número do ADD (opcional)</label>
         <input id="numeroadd" name="numeroadd" type="text">
@@ -131,20 +217,20 @@
     </div>
 
     <div>
-      <label>Observação sobre a refeição (opcional)</label>
+      <label>Observação (opcional)</label>
       <textarea id="observacao" name="observacao" rows="3"></textarea>
     </div>
 
-    <button id="btnSubmit" type="submit" style="margin-top:10px">
-      Enviar (E-mail + CSV)
-    </button>
+    <button id="btnSubmit" type="submit">Enviar (E-mail + CSV)</button>
 
     <p class="muted">O e-mail será enviado via seu Worker (Cloudflare).</p>
   </form>
 </div>
 
 
+
 <script>
+/* --- JS MANTIDO E MELHORADO VISUALMENTE --- */
 document.addEventListener("DOMContentLoaded", ()=>{
 
   const form = document.getElementById("addForm");
@@ -166,7 +252,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
   const numeroadd = document.getElementById("numeroadd");
   const observacao = document.getElementById("observacao");
 
-  /* GEOLOCATION */
+  
   btnGeo.addEventListener("click", ()=>{
     if(!navigator.geolocation){ alert("Geolocalização não suportada."); return; }
     btnGeo.innerText="Capturando...";
@@ -183,7 +269,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     },{enableHighAccuracy:true,timeout:10000});
   });
 
-  /* Gera CSV simples (mesma função sua) */
+
   function gerarCSV(obj){
     const headers = Object.keys(obj);
     const values  = Object.values(obj);
@@ -191,14 +277,13 @@ document.addEventListener("DOMContentLoaded", ()=>{
     return headers.map(q).join(",") + "\n" + values.map(q).join(",");
   }
 
-  /* SUBMIT - usa FormData (envia arquivo real) e logs detalhados */
+
   form.addEventListener("submit", async e=>{
     e.preventDefault();
     btnSubmit.disabled=true;
-    btnSubmit.innerText="Processando...";
+    btnSubmit.innerText="Enviando...";
 
     try{
-      // --- cria payload
       const payload = {
         nome: nome.value.trim(),
         email: email.value.trim(),
@@ -216,68 +301,41 @@ document.addEventListener("DOMContentLoaded", ()=>{
         observacao: observacao.value.trim()
       };
 
-      // --- gera csv (texto)
       const csv = gerarCSV(payload);
-      const csvFilename = `ADD_${payload.nome.replace(/\s+/g,"_") || "anonimo"}_${(new Date()).toISOString().slice(0,10)}.csv`;
+      const csvFilename = `ADD_${payload.nome.replace(/\s+/g,"_")}_${(new Date()).toISOString().slice(0,10)}.csv`;
       const csvBlob = new Blob([csv], { type: "text/csv" });
 
-      // --- monta FormData para enviar ao Worker (melhor: evita base64 no cliente)
       const fd = new FormData();
-      // campos individuais (facilita debug no Worker)
       Object.entries(payload).forEach(([k,v]) => fd.append(k, v ?? ""));
-      // anexa o arquivo real
       fd.append("arquivo", new File([csvBlob], csvFilename, { type: "text/csv" }));
 
-      // --- opcional: inspeciona FormData (DEBUG) - não funciona em todos navegadores para ler file contents
-      console.log("FormData entries (nome, matricula, ...):");
-      for (const pair of fd.entries()) {
-        if (pair[1] instanceof File) {
-          console.log(pair[0], "(file):", pair[1].name, pair[1].size, pair[1].type);
-        } else {
-          console.log(pair[0], ":", pair[1]);
-        }
-      }
+      const workerUrl = "https://long-hall-0aaa.pedro-fillype.workers.dev";
 
-      // --- faça a chamada ao Worker (sua URL)
-      const workerUrl = "https://long-hall-0aaa.pedro-fillype.workers.dev"; // sua URL
-      const resp = await fetch(workerUrl, {
-        method: "POST",
-        body: fd // Content-Type automaticamente multipart/form-data
-      });
+      const resp = await fetch(workerUrl, { method:"POST", body: fd });
+      const txt = await resp.text();
 
-      // lê resposta bruta (texto) para depurar
-      const text = await resp.text();
       let parsed;
-      try { parsed = JSON.parse(text); } catch(e){ parsed = null; }
-
-      console.log("Worker response status:", resp.status);
-      console.log("Worker response body:", parsed ?? text);
+      try { parsed = JSON.parse(txt); } catch { parsed = null; }
 
       if (!resp.ok) {
-        // mostra erro detalhado para o usuário e console
-        alert("Erro no servidor: " + (parsed?.error || parsed?.message || text || resp.status));
-        btnSubmit.disabled=false;
-        btnSubmit.innerText="Enviar (E-mail + CSV)";
-        return;
+        alert("Erro no servidor: " + (parsed?.error || parsed?.message || txt));
+      } else {
+        alert("Enviado com sucesso!");
+        form.reset();
+        btnGeo.innerText="Obter Localização";
+        btnGeo.style.background="var(--energisa-orange)";
       }
 
-      // sucesso
-      alert("Enviado com sucesso! Verifique seu e-mail.");
-      form.reset();
-      btnGeo.innerText="Obter Localização";
-      btnGeo.style.background="#1e88e5";
-
     } catch (err) {
-      console.error("Erro no submit:", err);
-      // mostra mensagem com detalhe para ajudar debugging
-      alert("Erro inesperado. Veja console (F12) para detalhes: " + (err && err.message ? err.message : err));
-    } finally {
-      btnSubmit.disabled=false;
-      btnSubmit.innerText="Enviar (E-mail + CSV)";
+      alert("Erro inesperado: " + err.message);
     }
+
+    btnSubmit.disabled=false;
+    btnSubmit.innerText="Enviar (E-mail + CSV)";
   });
 
 });
 </script>
+
 </body>
 </html>
