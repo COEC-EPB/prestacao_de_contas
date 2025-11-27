@@ -45,9 +45,6 @@
   <h1>PRESTAÇÃO DE CONTAS - ADD</h1>
 
   <form id="addForm" autocomplete="off">
-    
-    <!-- Web3Forms Access Key -->
-    <input type="hidden" name="access_key" value="89885c8d-355e-4b5f-8fe6-d2dfd2e7aff9">
 
     <div>
       <label>Nome *</label>
@@ -139,7 +136,7 @@
       Enviar (E-mail + CSV)
     </button>
 
-    <p class="muted">O e-mail será enviado via Web3Forms.</p>
+    <p class="muted">O e-mail será enviado via seu Worker (Cloudflare).</p>
   </form>
 </div>
 
@@ -198,43 +195,46 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
     try{
       const payload = {
-        timestamp:new Date().toISOString(),
         nome:nome.value.trim(),
         regional:regional.value,
         polo:polo.value,
         matricula:matricula.value.trim(),
-        datauso:datauso.value,
+        data:datauso.value,
         tiporefeicao:tiporefeicao.value,
         horario:horario.value,
         localidade:localidade.value.trim(),
-        localizacao_gps:geo.value,
+        gps:geo.value,
         sequencia:sequencia.value.trim(),
         osrrss:osrrss.value.trim(),
         numeroadd:numeroadd.value.trim(),
         observacao:observacao.value.trim()
       };
 
+      // GERA CSV → base64
       const csv = gerarCSV(payload);
-      const blob = new Blob([csv], {type: "text/csv"});
-      const file = new File([blob], `ADD_${payload.nome}.csv`, {type:"text/csv"});
+      const arquivoBase64 = btoa(unescape(encodeURIComponent(csv)));
+      const arquivoNome = `ADD_${payload.nome}.csv`;
 
-      const formData = new FormData(form);
-      formData.append("attachment", file);
-
-      const res = await fetch("https://api.web3forms.com/submit", {
+      // ENVIA PARA SEU WORKER
+      const res = await fetch("https://long-hall-0aaa.pedro-fillype.workers.dev", {
         method: "POST",
-        body: formData
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...payload,
+          arquivoNome,
+          arquivoBase64
+        })
       });
 
       const data = await res.json();
 
-      if(data.success){
-        alert("Sucesso! O e-mail foi enviado com o CSV em anexo.");
+      if(data.id){
+        alert("Sucesso! E-mail enviado com o CSV anexado.");
         form.reset();
         btnGeo.innerText="Obter Localização";
         btnGeo.style.background="#1e88e5";
       } else {
-        alert("Erro ao enviar: " + data.message);
+        alert("Erro ao enviar: " + JSON.stringify(data));
       }
 
     }catch(e){
