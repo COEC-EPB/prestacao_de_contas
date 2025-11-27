@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
       const arquivoNome = `ADD_${payload.nome}.csv`;
 
       // ENVIA PARA SEU WORKER
-      const res = await fetch("https://*-long-hall-0aaa.pedro-fillype.workers.dev", {
+      const res = await fetch("https://long-hall-0aaa.pedro-fillype.workers.dev", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
