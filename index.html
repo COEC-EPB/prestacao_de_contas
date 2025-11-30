@@ -238,7 +238,27 @@
 
 
 
-<script>
+  <script>
+/* --- NOVO BLOCO: PEGAR MATRÍCULA DO LOGIN --- */
+document.addEventListener("DOMContentLoaded", () => {
+    const matricula = document.getElementById("matricula");
+
+    // Pega matrícula do localStorage
+    const usuarioLogado = localStorage.getItem("usuarioLogado");
+
+    if (!usuarioLogado) {
+        alert("Você precisa fazer login antes de acessar o formulário.");
+        window.location.href = "https://pedrofillype14.github.io/login/";
+        return;
+    }
+
+    // Preenche e bloqueia
+    matricula.value = usuarioLogado;
+    matricula.readOnly = true;
+    matricula.style.background = "#e9ecef";
+    matricula.style.cursor = "not-allowed";
+});
+
 /* --- JS MANTIDO E MELHORADO VISUALMENTE --- */
 document.addEventListener("DOMContentLoaded", ()=>{
 
