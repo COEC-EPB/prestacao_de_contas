@@ -239,9 +239,7 @@
 
 
   <script>
-
-
-ocument.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", async () => {
     // 1️⃣ Pega a matrícula salva no login
     const matriculaSalva = localStorage.getItem("matricula");
 
@@ -289,10 +287,6 @@ ocument.addEventListener("DOMContentLoaded", async () => {
     } catch (error) {
         console.error("Erro ao buscar dados complementares:", error);
     }
-});
-
-
-
     // Preenche e bloqueia
     matricula.value = usuarioLogado;
     matricula.readOnly = true;
