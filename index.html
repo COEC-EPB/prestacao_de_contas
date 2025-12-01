@@ -240,16 +240,39 @@
 
   <script>
 /* --- NOVO BLOCO: PEGAR MATRÍCULA DO LOGIN --- */
-document.addEventListener("DOMContentLoaded", () => {
-    const matricula = document.getElementById("matricula");
-
-    // Pega matrícula do localStorage
+    document.addEventListener("DOMContentLoaded", async () => {
+    // 1️⃣ Verifica se o usuário está logado
     const usuarioLogado = localStorage.getItem("usuarioLogado");
 
     if (!usuarioLogado) {
         alert("Você precisa fazer login antes de acessar o formulário.");
         window.location.href = "https://pedrofillype14.github.io/login/";
         return;
+    }
+
+    // 2️⃣ Pega a matrícula do localStorage
+    const matricula = localStorage.getItem("matricula");
+    if (!matricula) {
+        alert("Matrícula não encontrada. Faça login novamente.");
+        window.location.href = "https://pedrofillype14.github.io/login/";
+        return;
+    }
+
+    // 3️⃣ Busca os dados do colaborador e preenche o formulário
+    try {
+        const resp = await fetch(`https://long-hall-0aaa.pedro-fillype.workers.dev/colaborador?matricula=${matricula}`);
+        const json = await resp.json();
+
+        if (json.ok) {
+            document.getElementById("nome").value = json.dados.nome;
+            document.getElementById("email").value = json.dados.email;
+            document.getElementById("matricula").value = json.dados.matricula;
+        } else {
+            alert("Não foi possível carregar os dados do usuário.");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Erro ao buscar os dados. Tente novamente mais tarde.");
     }
 
     // Preenche e bloqueia
