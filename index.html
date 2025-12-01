@@ -239,40 +239,44 @@
 
 
   <script>
-/* --- NOVO BLOCO: PEGAR MATRÍCULA DO LOGIN --- */
-    document.addEventListener("DOMContentLoaded", async () => {
-    // 1️⃣ Verifica se o usuário está logado
-    const usuarioLogado = localStorage.getItem("usuarioLogado");
+/* --- BLOCO CORRIGIDO: PEGAR MATRÍCULA DO LOGIN --- */
+document.addEventListener("DOMContentLoaded", async () => {
+    
+    // 1️⃣ Pega a matrícula salva no login
+    const matriculaSalva = localStorage.getItem("matricula");
 
-    if (!usuarioLogado) {
-        alert("Você precisa fazer login antes de acessar o formulário.");
-        window.location.href = "https://pedrofillype14.github.io/login/";
-        return;
-    }
-
-    // 2️⃣ Pega a matrícula do localStorage
-    const matricula = localStorage.getItem("matricula");
-    if (!matricula) {
+    // Se não tiver matrícula salva, chuta pro login
+    if (!matriculaSalva) {
         alert("Matrícula não encontrada. Faça login novamente.");
         window.location.href = "https://pedrofillype14.github.io/login/";
         return;
     }
 
-    // 3️⃣ Busca os dados do colaborador e preenche o formulário
+    // 2️⃣ Referência ao CAMPO do formulário
+    const inputMatricula = document.getElementById("matricula");
+    
+    // Preenche o campo visualmente e bloqueia edição
+    if (inputMatricula) {
+        inputMatricula.value = matriculaSalva;
+        inputMatricula.readOnly = true;
+        inputMatricula.style.background = "#e9ecef";
+        inputMatricula.style.cursor = "not-allowed";
+    }
+
+    // 3️⃣ Busca os dados do colaborador no Worker (Backend)
     try {
-        const resp = await fetch(`https://long-hall-0aaa.pedro-fillype.workers.dev/colaborador?matricula=${matricula}`);
+        const resp = await fetch(`https://long-hall-0aaa.pedro-fillype.workers.dev/colaborador?matricula=${matriculaSalva}`);
         const json = await resp.json();
 
-        if (json.ok) {
-            document.getElementById("nome").value = json.dados.nome;
-            document.getElementById("email").value = json.dados.email;
-            document.getElementById("matricula").value = json.dados.matricula;
+        if (json.ok && json.dados) {
+            // Preenche Nome e Email automaticamente
+            if(document.getElementById("nome")) document.getElementById("nome").value = json.dados.nome;
+            if(document.getElementById("email")) document.getElementById("email").value = json.dados.email;
         } else {
-            alert("Não foi possível carregar os dados do usuário.");
+            console.warn("Dados do colaborador não encontrados no servidor.");
         }
     } catch (error) {
-        console.error(error);
-        alert("Erro ao buscar os dados. Tente novamente mais tarde.");
+        console.error("Erro ao buscar dados complementares:", error);
     }
 
     // Preenche e bloqueia
