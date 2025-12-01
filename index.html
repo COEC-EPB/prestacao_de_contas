@@ -239,23 +239,20 @@
 
 
   <script>
-/* --- BLOCO CORRIGIDO: PEGAR MATRÍCULA DO LOGIN --- */
+
 document.addEventListener("DOMContentLoaded", async () => {
-    
     // 1️⃣ Pega a matrícula salva no login
     const matriculaSalva = localStorage.getItem("matricula");
 
-    // Se não tiver matrícula salva, chuta pro login
+    // Se não tiver matrícula salva, redireciona para login
     if (!matriculaSalva) {
         alert("Matrícula não encontrada. Faça login novamente.");
         window.location.href = "https://pedrofillype14.github.io/login/";
         return;
     }
 
-    // 2️⃣ Referência ao CAMPO do formulário
+    // 2️⃣ Referência ao campo do formulário
     const inputMatricula = document.getElementById("matricula");
-    
-    // Preenche o campo visualmente e bloqueia edição
     if (inputMatricula) {
         inputMatricula.value = matriculaSalva;
         inputMatricula.readOnly = true;
@@ -269,15 +266,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         const json = await resp.json();
 
         if (json.ok && json.dados) {
-            // Preenche Nome e Email automaticamente
-            if(document.getElementById("nome")) document.getElementById("nome").value = json.dados.nome;
-            if(document.getElementById("email")) document.getElementById("email").value = json.dados.email;
+            if (document.getElementById("nome")) document.getElementById("nome").value = json.dados.nome;
+            if (document.getElementById("email")) document.getElementById("email").value = json.dados.email;
         } else {
             console.warn("Dados do colaborador não encontrados no servidor.");
         }
     } catch (error) {
         console.error("Erro ao buscar dados complementares:", error);
     }
+
 
     // Preenche e bloqueia
     matricula.value = usuarioLogado;
