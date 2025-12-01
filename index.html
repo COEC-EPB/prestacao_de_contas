@@ -240,7 +240,8 @@
 
   <script>
 
-document.addEventListener("DOMContentLoaded", async () => {
+
+ocument.addEventListener("DOMContentLoaded", async () => {
     // 1️⃣ Pega a matrícula salva no login
     const matriculaSalva = localStorage.getItem("matricula");
 
@@ -251,8 +252,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    // 2️⃣ Referência ao campo do formulário
+    // 2️⃣ Referência aos campos
     const inputMatricula = document.getElementById("matricula");
+    const inputNome = document.getElementById("nome");
+    const inputEmail = document.getElementById("email");
+
+    // Preenche e bloqueia matrícula
     if (inputMatricula) {
         inputMatricula.value = matriculaSalva;
         inputMatricula.readOnly = true;
@@ -266,14 +271,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         const json = await resp.json();
 
         if (json.ok && json.dados) {
-            if (document.getElementById("nome")) document.getElementById("nome").value = json.dados.nome;
-            if (document.getElementById("email")) document.getElementById("email").value = json.dados.email;
+            if (inputNome) {
+                inputNome.value = json.dados.nome;
+                inputNome.readOnly = true;
+                inputNome.style.background = "#e9ecef";
+                inputNome.style.cursor = "not-allowed";
+            }
+            if (inputEmail) {
+                inputEmail.value = json.dados.email;
+                inputEmail.readOnly = true;
+                inputEmail.style.background = "#e9ecef";
+                inputEmail.style.cursor = "not-allowed";
+            }
         } else {
             console.warn("Dados do colaborador não encontrados no servidor.");
         }
     } catch (error) {
         console.error("Erro ao buscar dados complementares:", error);
     }
+});
+
 
 
     // Preenche e bloqueia
