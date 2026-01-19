@@ -8,6 +8,25 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
 <style>
+  .form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.form-grid label {
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
   /* PREVIEW DE DIAS */
 .preview-box {
   background: #f4f8fb;
@@ -180,7 +199,7 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="form-grid">
       <div>
         <label>Regional *</label>
         <select id="regional" required>
@@ -209,20 +228,18 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="form-grid">
       <div>
         <label>Matrícula *</label>
         <input id="matricula" required>
       </div>
-      <div>
-        <label>Data de Uso *</label>
-        <input type="date" id="datauso" required>
-      </div>
-    </div>
-    <div class="row">
-  
+      <div class="form-grid">
+  <div>
+    <label>Data de Uso *</label>
+    <input type="date" id="datauso" required>
+  </div>
 
-    <div>
+  <div>
     <label>Quantidade de dias (máx. 5)</label>
     <select id="qtdDias">
       <option value="1">1 dia</option>
@@ -236,7 +253,7 @@
 
 <div id="previewDias" class="preview-box"></div>
 
-    <div class="row">
+    <div class="form-grid">
       <div>
         <label>Tipo de Refeição *</label>
         <select id="tiporefeicao" required>
@@ -257,7 +274,7 @@
       <input id="localidade" required>
     </div>
 
-    <div class="row">
+    <div class="form-grid">
       <div>
         <label>Solicitar Localização (opcional)</label>
         <button type="button" id="btnGeo" class="small">Obter Localização</button>
@@ -310,7 +327,7 @@ function logout(){
 /* 🔹 INICIALIZAÇÃO */
 document.addEventListener("DOMContentLoaded", async () => {
 
-  // 🔹 LIMITA DATA A ATÉ 5 DIAS A PARTIR DE HOJE
+/*  // 🔹 LIMITA DATA A ATÉ 5 DIAS A PARTIR DE HOJE
 const dataUsoInput = document.getElementById("datauso");
 
 const hoje = new Date();
@@ -319,6 +336,7 @@ maxDate.setDate(hoje.getDate() + 4); // hoje + 4 = total 5 dias
 
 dataUsoInput.min = hoje.toISOString().slice(0,10);
 dataUsoInput.max = maxDate.toISOString().slice(0,10);
+*/
 
   // --- VALIDA LOGIN ---
   const matriculaSalva = localStorage.getItem("matricula");
