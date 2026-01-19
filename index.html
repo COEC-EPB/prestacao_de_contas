@@ -373,8 +373,10 @@ if (!resp.ok || result.ok === false) {
   throw new Error(result.error || "Erro ao enviar formulário");
 }
     
-    alert("Registro enviado com sucesso!");
-    document.getElementById("addForm").reset();
+    alert("Registro enviado com sucesso! A página será atualizada.");
+setTimeout(() => {
+  location.reload();
+}, 500);
   } 
   catch (err) {
     alert("Erro: " + err.message);
