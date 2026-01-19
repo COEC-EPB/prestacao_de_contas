@@ -363,15 +363,15 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
     for (const [k, v] of Object.entries(payload)) fd.append(k, v);
 
     const resp = await fetch("https://long-hall-0aaa.pedro-fillype.workers.dev/submit", {
-      method: "POST",
-      body: fd
-    });
+  method: "POST",
+  body: fd
+});
 
-      const result = await resp.json();
-  
-  if (!resp.ok || result.ok === false) {
-    throw new Error(result.error || "Erro ao enviar formulário");
-  }
+const result = await resp.json();
+
+if (!resp.ok || result.ok === false) {
+  throw new Error(result.error || "Erro ao enviar formulário");
+}
     
     alert("Registro enviado com sucesso!");
     document.getElementById("addForm").reset();
