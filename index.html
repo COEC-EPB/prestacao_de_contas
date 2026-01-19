@@ -367,12 +367,7 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
       body: fd
     });
 
-    const resp = await fetch("https://long-hall-0aaa.pedro-fillype.workers.dev/submit", {
-  method: "POST",
-  body: fd
-  });
-  
-  const result = await resp.json();
+      const result = await resp.json();
   
   if (!resp.ok || result.ok === false) {
     throw new Error(result.error || "Erro ao enviar formulário");
