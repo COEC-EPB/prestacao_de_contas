@@ -8,6 +8,35 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
 <style>
+  /* PREVIEW DE DIAS */
+.preview-box {
+  background: #f4f8fb;
+  border: 1px solid #d0e3ef;
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.preview-box strong {
+  color: var(--energisa-blue-dark);
+}
+
+.preview-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.preview-item {
+  background: white;
+  border: 1px solid #cfd8dc;
+  border-radius: 8px;
+  padding: 6px;
+  text-align: center;
+  font-weight: 600;
+}
   :root {
     --energisa-blue: #0097CE;
     --energisa-blue-dark: #0079a6;
@@ -190,11 +219,12 @@
         <input type="date" id="datauso" required>
       </div>
     </div>
-
     <div class="row">
-  <div>
+  
+
+    <div>
     <label>Quantidade de dias (máx. 5)</label>
-    <select id="qtdDias" required>
+    <select id="qtdDias">
       <option value="1">1 dia</option>
       <option value="2">2 dias</option>
       <option value="3">3 dias</option>
@@ -204,7 +234,7 @@
   </div>
 </div>
 
-<div id="previewDias" class="muted"></div>
+<div id="previewDias" class="preview-box"></div>
 
     <div class="row">
       <div>
@@ -411,8 +441,8 @@ setTimeout(() => {
   btn.innerText = "Enviar Registro";
 });
 
-  /* ============================
-   🔹 PREVIEW DOS DIAS
+ /* ============================
+   🔹 PREVIEW DOS DIAS (5 em 5)
 ============================ */
 const dataUsoInput = document.getElementById("datauso");
 const qtdDiasInput = document.getElementById("qtdDias");
@@ -423,18 +453,26 @@ function atualizarPreview() {
 
   if (!dataUsoInput.value) return;
 
-  const dataInicial = new Date(dataUsoInput.value);
-  const qtd = Number(qtdDiasInput.value);
+  const dataInicial = new Date(dataUsoInput.value + "T00:00:00");
+  const qtd = Math.min(Number(qtdDiasInput.value), 5);
 
-  let html = "<strong>📅 Dias que serão registrados:</strong><br>";
+  let html = `
+    <strong>📅 Dias que serão registrados</strong>
+    <div class="preview-list">
+  `;
 
   for (let i = 0; i < qtd; i++) {
     const d = new Date(dataInicial);
     d.setDate(dataInicial.getDate() + i);
 
-    html += "• " + d.toLocaleDateString("pt-BR") + "<br>";
+    html += `
+      <div class="preview-item">
+        ${d.toLocaleDateString("pt-BR")}
+      </div>
+    `;
   }
 
+  html += "</div>";
   previewDias.innerHTML = html;
 }
 
