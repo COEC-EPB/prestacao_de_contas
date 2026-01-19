@@ -265,6 +265,16 @@ function logout(){
 /* 🔹 INICIALIZAÇÃO */
 document.addEventListener("DOMContentLoaded", async () => {
 
+  // 🔹 LIMITA DATA A ATÉ 5 DIAS A PARTIR DE HOJE
+const dataUsoInput = document.getElementById("datauso");
+
+const hoje = new Date();
+const maxDate = new Date();
+maxDate.setDate(hoje.getDate() + 4); // hoje + 4 = total 5 dias
+
+dataUsoInput.min = hoje.toISOString().slice(0,10);
+dataUsoInput.max = maxDate.toISOString().slice(0,10);
+
   // --- VALIDA LOGIN ---
   const matriculaSalva = localStorage.getItem("matricula");
 
