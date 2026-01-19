@@ -191,6 +191,18 @@
       </div>
     </div>
 
+    <!-- 🔹 NOVO CAMPO -->
+    <div>
+      <label>Quantidade de dias (máx. 5)</label>
+      <select id="qtdDias" required>
+        <option value="1">1 dia</option>
+        <option value="2">2 dias</option>
+        <option value="3">3 dias</option>
+        <option value="4">4 dias</option>
+        <option value="5">5 dias</option>
+      </select>
+    </div>
+
     <div class="row">
       <div>
         <label>Tipo de Refeição *</label>
@@ -350,8 +362,14 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
   btn.innerText = "Enviando...";
 
   const get = id => document.getElementById(id).value.trim();
+  const dataInicial = new Date(get("datauso"));
+  const qtdDias = Number(get("qtdDias"));
 
-  const payload = {
+  for (let i = 0; i < qtdDias; i++) {
+    const data = new Date(dataInicial);
+    data.setDate(dataInicial.getDate() + i);
+
+    const payload = {
     nome: get("nome"),
     email: get("email"),
     regional: get("regional"),
