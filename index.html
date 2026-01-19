@@ -413,44 +413,61 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
 
   const get = id => document.getElementById(id).value.trim();
 
-  const payload = {
-    nome: get("nome"),
-    email: get("email"),
-    regional: get("regional"),
-    polo: get("polo"),
-    matricula: get("matricula"),
-    datauso: get("datauso"),
-    tiporefeicao: get("tiporefeicao"),
-    horario: get("horario"),
-    localidade: get("localidade"),
-    gps: get("geo"),
-    sequencia: get("sequencia"),
-    osrrss: get("osrrss"),
-    numeroadd: get("numeroadd"),
-    observacao: get("observacao")
-  };
+  const dataBase = new Date(get("datauso"));
+  const qtdDias = Number(document.getElementById("qtdDias").value);
+
+  if (!dataBase || qtdDias < 1 || qtdDias > 5) {
+    alert("Quantidade de dias inválida.");
+    btn.disabled = false;
+    btn.innerText = "Enviar Registro";
+    return;
+  }
 
   try {
-    const fd = new FormData();
-    for (const [k, v] of Object.entries(payload)) fd.append(k, v);
+    for (let i = 0; i < qtdDias; i++) {
+      const dataAtual = new Date(dataBase);
+      dataAtual.setDate(dataAtual.getDate() + i);
 
-    const resp = await fetch("https://long-hall-0aaa.pedro-fillype.workers.dev/submit", {
-  method: "POST",
-  body: fd
-});
+      const dataFormatada = dataAtual.toISOString().slice(0, 10);
 
-const result = await resp.json();
+      const payload = {
+        nome: get("nome"),
+        email: get("email"),
+        regional: get("regional"),
+        polo: get("polo"),
+        matricula: get("matricula"),
+        datauso: dataFormatada, // 🔥 DATA CORRETA
+        tiporefeicao: get("tiporefeicao"),
+        horario: get("horario"),
+        localidade: get("localidade"),
+        gps: get("geo"),
+        sequencia: get("sequencia"),
+        osrrss: get("osrrss"),
+        numeroadd: get("numeroadd"),
+        observacao: get("observacao")
+      };
 
-if (!resp.ok || result.ok === false) {
-  throw new Error(result.error || "Erro ao enviar formulário");
-}
-    
-    alert("Registro enviado com sucesso! A página será atualizada.");
-setTimeout(() => {
-  location.reload();
-}, 500);
-  } 
-  catch (err) {
+      const fd = new FormData();
+      for (const [k, v] of Object.entries(payload)) {
+        fd.append(k, v);
+      }
+
+      const resp = await fetch(
+        "https://long-hall-0aaa.pedro-fillype.workers.dev/submit",
+        { method: "POST", body: fd }
+      );
+
+      const result = await resp.json();
+
+      if (!resp.ok || result.ok === false) {
+        throw new Error("Erro ao enviar registro do dia " + dataFormatada);
+      }
+    }
+
+    alert("Registros enviados com sucesso!");
+    location.reload();
+
+  } catch (err) {
     alert("Erro: " + err.message);
   }
 
