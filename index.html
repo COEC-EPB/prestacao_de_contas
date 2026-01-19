@@ -83,7 +83,7 @@
   }
 
   /* GRID */
-  .row {
+  .row {R
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 18px;
@@ -190,6 +190,21 @@
         <input type="date" id="datauso" required>
       </div>
     </div>
+
+    <div class="row">
+  <div>
+    <label>Quantidade de dias (máx. 5)</label>
+    <select id="qtdDias" required>
+      <option value="1">1 dia</option>
+      <option value="2">2 dias</option>
+      <option value="3">3 dias</option>
+      <option value="4">4 dias</option>
+      <option value="5">5 dias</option>
+    </select>
+  </div>
+</div>
+
+<div id="previewDias" class="muted"></div>
 
     <div class="row">
       <div>
@@ -395,6 +410,36 @@ setTimeout(() => {
   btn.disabled = false;
   btn.innerText = "Enviar Registro";
 });
+
+  /* ============================
+   🔹 PREVIEW DOS DIAS
+============================ */
+const dataUsoInput = document.getElementById("datauso");
+const qtdDiasInput = document.getElementById("qtdDias");
+const previewDias = document.getElementById("previewDias");
+
+function atualizarPreview() {
+  previewDias.innerHTML = "";
+
+  if (!dataUsoInput.value) return;
+
+  const dataInicial = new Date(dataUsoInput.value);
+  const qtd = Number(qtdDiasInput.value);
+
+  let html = "<strong>📅 Dias que serão registrados:</strong><br>";
+
+  for (let i = 0; i < qtd; i++) {
+    const d = new Date(dataInicial);
+    d.setDate(dataInicial.getDate() + i);
+
+    html += "• " + d.toLocaleDateString("pt-BR") + "<br>";
+  }
+
+  previewDias.innerHTML = html;
+}
+
+dataUsoInput.addEventListener("change", atualizarPreview);
+qtdDiasInput.addEventListener("change", atualizarPreview);
 </script>
 
 </body>
