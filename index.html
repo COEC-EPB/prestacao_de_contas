@@ -362,12 +362,7 @@ dataUsoInput.addEventListener("change", () => {
   const sel = new Date(dataUsoInput.value + "T00:00:00");
   sel.setHours(0,0,0,0);
 
-  if (sel < hoje) {
-    alert("A data não pode ser anterior a hoje.");
-    dataUsoInput.value = toISODate(hoje);
-  }
-
-  if (sel > maxDate) {
+    if (sel > maxDate) {
     alert("A data não pode ser maior que 7 dias à frente.");
     dataUsoInput.value = toISODate(maxDate);
   }
