@@ -337,14 +337,17 @@ dataUsoInput.min = hoje.toISOString().slice(0,10);
 dataUsoInput.max = maxDate.toISOString().slice(0,10);
 */
 
-  // 🔹 LIMITA DATA A ATÉ 7 DIAS (incluindo hoje)
+// 🔹 LIMITA DATA: até 30 dias pra trás e no máximo 7 dias pra frente
 const dataUsoInput = document.getElementById("datauso");
 
 const hoje = new Date();
 hoje.setHours(0,0,0,0);
 
+const minDate = new Date(hoje);
+minDate.setDate(hoje.getDate() - 30); // 30 dias pra trás
+
 const maxDate = new Date(hoje);
-maxDate.setDate(hoje.getDate() + 7); // hoje + 7 dias -> ex: 04/02 => 11/02
+maxDate.setDate(hoje.getDate() + 7);  // 7 dias pra frente
 
 function toISODate(d){
   const x = new Date(d);
@@ -352,22 +355,28 @@ function toISODate(d){
   return x.toISOString().slice(0,10);
 }
 
-dataUsoInput.min = toISODate(hoje);
+// trava o calendário
+dataUsoInput.min = toISODate(minDate);
 dataUsoInput.max = toISODate(maxDate);
 
-// se a pessoa tentar digitar fora do limite, corrige/avisa
+// valida se alguém digitar manualmente fora do range
 dataUsoInput.addEventListener("change", () => {
   if (!dataUsoInput.value) return;
 
   const sel = new Date(dataUsoInput.value + "T00:00:00");
   sel.setHours(0,0,0,0);
 
-    if (sel > maxDate) {
+  if (sel < minDate) {
+    alert("A data não pode ser anterior a 30 dias atrás.");
+    dataUsoInput.value = toISODate(minDate);
+  }
+
+  if (sel > maxDate) {
     alert("A data não pode ser maior que 7 dias à frente.");
     dataUsoInput.value = toISODate(maxDate);
   }
 
-  atualizarPreview(); // mantém seu preview sincronizado
+  atualizarPreview(); // mantém o preview atualizado
 });
 
   // --- VALIDA LOGIN ---
