@@ -326,58 +326,45 @@ function logout(){
 /* 🔹 INICIALIZAÇÃO */
 document.addEventListener("DOMContentLoaded", async () => {
 
-/*  // 🔹 LIMITA DATA A ATÉ 5 DIAS A PARTIR DE HOJE
-const dataUsoInput = document.getElementById("datauso");
+  // 🔹 LIMITA DATA: até 30 dias pra trás e no máximo 7 dias pra frente
+  const dataUsoInput = document.getElementById("datauso");
 
-const hoje = new Date();
-const maxDate = new Date();
-maxDate.setDate(hoje.getDate() + 4); // hoje + 4 = total 5 dias
+  const hoje = new Date();
+  hoje.setHours(0,0,0,0);
 
-dataUsoInput.min = hoje.toISOString().slice(0,10);
-dataUsoInput.max = maxDate.toISOString().slice(0,10);
-*/
+  const minDate = new Date(hoje);
+  minDate.setDate(hoje.getDate() - 30); // 30 dias pra trás
 
-// 🔹 LIMITA DATA: até 30 dias pra trás e no máximo 7 dias pra frente
-const dataUsoInput = document.getElementById("datauso");
+  const maxDate = new Date(hoje);
+  maxDate.setDate(hoje.getDate() + 7);  // 7 dias pra frente
 
-const hoje = new Date();
-hoje.setHours(0,0,0,0);
-
-const minDate = new Date(hoje);
-minDate.setDate(hoje.getDate() - 30); // 30 dias pra trás
-
-const maxDate = new Date(hoje);
-maxDate.setDate(hoje.getDate() + 7);  // 7 dias pra frente
-
-function toISODate(d){
-  const x = new Date(d);
-  x.setHours(0,0,0,0);
-  return x.toISOString().slice(0,10);
-}
-
-// trava o calendário
-dataUsoInput.min = toISODate(minDate);
-dataUsoInput.max = toISODate(maxDate);
-
-// valida se alguém digitar manualmente fora do range
-dataUsoInput.addEventListener("change", () => {
-  if (!dataUsoInput.value) return;
-
-  const sel = new Date(dataUsoInput.value + "T00:00:00");
-  sel.setHours(0,0,0,0);
-
-  if (sel < minDate) {
-    alert("A data não pode ser anterior a 30 dias atrás.");
-    dataUsoInput.value = toISODate(minDate);
+  function toISODate(d){
+    const x = new Date(d);
+    x.setHours(0,0,0,0);
+    return x.toISOString().slice(0,10);
   }
 
-  if (sel > maxDate) {
-    alert("A data não pode ser maior que 7 dias à frente.");
-    dataUsoInput.value = toISODate(maxDate);
-  }
+  dataUsoInput.min = toISODate(minDate);
+  dataUsoInput.max = toISODate(maxDate);
 
-  atualizarPreview(); // mantém o preview atualizado
-});
+  dataUsoInput.addEventListener("change", () => {
+    if (!dataUsoInput.value) return;
+
+    const sel = new Date(dataUsoInput.value + "T00:00:00");
+    sel.setHours(0,0,0,0);
+
+    if (sel < minDate) {
+      alert("A data não pode ser anterior a 30 dias atrás.");
+      dataUsoInput.value = toISODate(minDate);
+    }
+
+    if (sel > maxDate) {
+      alert("A data não pode ser maior que 7 dias à frente.");
+      dataUsoInput.value = toISODate(maxDate);
+    }
+
+    atualizarPreview(); // mantém o preview atualizado
+  });
 
   // --- VALIDA LOGIN ---
   const matriculaSalva = localStorage.getItem("matricula");
@@ -445,7 +432,7 @@ document.getElementById("btnGeo").addEventListener("click", () => {
   );
 });
 
-/* 🔹 ENVIO DO FORMULÁRIO */
+/* 🔹 ENVIO DO FORMULÁRIO (MULTI-DIAS COM TRATAMENTO DE 409) */
 document.getElementById("addForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -455,21 +442,32 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
 
   const get = id => document.getElementById(id).value.trim();
 
-  const dataBase = new Date(get("datauso"));
-  const qtdDias = Number(document.getElementById("qtdDias").value);
+  const dataBaseStr = get("datauso");
+  const dataBase = dataBaseStr ? new Date(dataBaseStr + "T00:00:00") : null;
+  const qtdDias = Number(document.getElementById("qtdDias").value || "1");
 
-  if (!dataBase || qtdDias < 1 || qtdDias > 5) {
-    alert("Quantidade de dias inválida.");
+  if (!dataBase || isNaN(dataBase.getTime())) {
+    alert("Informe uma data de uso válida.");
     btn.disabled = false;
     btn.innerText = "Enviar Registro";
     return;
   }
 
+  if (qtdDias < 1 || qtdDias > 5) {
+    alert("A quantidade de dias deve ser entre 1 e 5.");
+    btn.disabled = false;
+    btn.innerText = "Enviar Registro";
+    return;
+  }
+
+  let diasSalvos = 0;
+  const diasPulados = []; // já tinham prestação
+  let erroCritico = null;
+
   try {
     for (let i = 0; i < qtdDias; i++) {
       const dataAtual = new Date(dataBase);
-      dataAtual.setDate(dataAtual.getDate() + i);
-
+      dataAtual.setDate(dataBase.getDate() + i);
       const dataFormatada = dataAtual.toISOString().slice(0, 10);
 
       const payload = {
@@ -478,7 +476,7 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
         regional: get("regional"),
         polo: get("polo"),
         matricula: get("matricula"),
-        datauso: dataFormatada, // 🔥 DATA CORRETA
+        datauso: dataFormatada,
         tiporefeicao: get("tiporefeicao"),
         horario: get("horario"),
         localidade: get("localidade"),
@@ -499,38 +497,85 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
         { method: "POST", body: fd }
       );
 
-      const result = await resp.json();
+      let result = {};
+      try { result = await resp.json(); } catch {}
 
-      if (!resp.ok || result.ok === false) {
-        throw new Error("Erro ao enviar registro do dia " + dataFormatada);
+      // 🔸 Caso de duplicidade (409) → só marca como pulado e continua
+      if (resp.status === 409) {
+        diasPulados.push(dataFormatada);
+        continue;
       }
+
+      // 🔴 Qualquer outro erro para o loop
+      if (!resp.ok || result.ok === false) {
+        erroCritico = {
+          dia: dataFormatada,
+          msg: result.error || `Erro ao enviar registro do dia ${dataFormatada}`
+        };
+        break;
+      }
+
+      diasSalvos++;
     }
 
-    alert("Registros enviados com sucesso!");
-    location.reload();
+    // Monta mensagem final
+    let msg = "";
+
+    if (diasSalvos > 0) {
+      msg += `✅ ${diasSalvos} dia(s) registrado(s) com sucesso.\n`;
+    }
+
+    if (diasPulados.length > 0) {
+      const formatados = diasPulados
+        .map(d => new Date(d + "T00:00:00").toLocaleDateString("pt-BR"))
+        .join(", ");
+      msg += `⚠️ Já existia prestação registrada para: ${formatados}.\n`;
+    }
+
+    if (erroCritico) {
+      const diaBR = new Date(erroCritico.dia + "T00:00:00").toLocaleDateString("pt-BR");
+      msg += `❌ Erro no dia ${diaBR}: ${erroCritico.msg}`;
+      alert(msg.trim());
+      btn.disabled = false;
+      btn.innerText = "Enviar Registro";
+      return;
+    }
+
+    if (!msg.trim()) {
+      msg = "Nenhuma alteração realizada.";
+    }
+
+    alert(msg.trim());
+
+    // Se pelo menos 1 dia foi salvo, atualiza página
+    if (diasSalvos > 0) {
+      setTimeout(() => location.reload(), 500);
+    } else {
+      btn.disabled = false;
+      btn.innerText = "Enviar Registro";
+    }
 
   } catch (err) {
-    alert("Erro: " + err.message);
+    alert("Erro inesperado: " + err.message);
+    btn.disabled = false;
+    btn.innerText = "Enviar Registro";
   }
-
-  btn.disabled = false;
-  btn.innerText = "Enviar Registro";
 });
 
- /* ============================
-   🔹 PREVIEW DOS DIAS (5 em 5)
+/* ============================
+   🔹 PREVIEW DOS DIAS
 ============================ */
-const dataUsoInput = document.getElementById("datauso");
+const dataUsoInput2 = document.getElementById("datauso");
 const qtdDiasInput = document.getElementById("qtdDias");
 const previewDias = document.getElementById("previewDias");
 
 function atualizarPreview() {
   previewDias.innerHTML = "";
 
-  if (!dataUsoInput.value) return;
+  if (!dataUsoInput2.value) return;
 
-  const dataInicial = new Date(dataUsoInput.value + "T00:00:00");
-  const qtd = Math.min(Number(qtdDiasInput.value), 5);
+  const dataInicial = new Date(dataUsoInput2.value + "T00:00:00");
+  const qtd = Math.min(Number(qtdDiasInput.value || "1"), 5);
 
   let html = `
     <strong>📅 Dias que serão registrados</strong>
@@ -552,9 +597,8 @@ function atualizarPreview() {
   previewDias.innerHTML = html;
 }
 
-dataUsoInput.addEventListener("change", atualizarPreview);
+dataUsoInput2.addEventListener("change", atualizarPreview);
 qtdDiasInput.addEventListener("change", atualizarPreview);
 </script>
-
 </body>
 </html>
