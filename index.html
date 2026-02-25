@@ -9,53 +9,55 @@
 
 <style>
   .form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  margin-bottom: 14px;
-}
-
-.form-grid label {
-  font-weight: 600;
-  margin-bottom: 4px;
-  display: block;
-}
-
-/* MOBILE */
-@media (max-width: 768px) {
-  .form-grid {
-    grid-template-columns: 1fr;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-bottom: 14px;
   }
-}
+
+  .form-grid label {
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
   /* PREVIEW DE DIAS */
-.preview-box {
-  background: #f4f8fb;
-  border: 1px solid #d0e3ef;
-  border-radius: 10px;
-  padding: 12px;
-  margin-top: 8px;
-  font-size: 14px;
-}
+  .preview-box {
+    background: #f4f8fb;
+    border: 1px solid #d0e3ef;
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 8px;
+    font-size: 14px;
+  }
 
-.preview-box strong {
-  color: var(--energisa-blue-dark);
-}
+  .preview-box strong {
+    color: var(--energisa-blue-dark);
+  }
 
-.preview-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 6px;
-  margin-top: 8px;
-}
+  .preview-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 6px;
+    margin-top: 8px;
+  }
 
-.preview-item {
-  background: white;
-  border: 1px solid #cfd8dc;
-  border-radius: 8px;
-  padding: 6px;
-  text-align: center;
-  font-weight: 600;
-}
+  .preview-item {
+    background: white;
+    border: 1px solid #cfd8dc;
+    border-radius: 8px;
+    padding: 6px;
+    text-align: center;
+    font-weight: 600;
+  }
+
   :root {
     --energisa-blue: #0097CE;
     --energisa-blue-dark: #0079a6;
@@ -131,7 +133,7 @@
   }
 
   /* GRID */
-  .row {R
+  .row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 18px;
@@ -233,24 +235,24 @@
         <label>Matrícula *</label>
         <input id="matricula" required>
       </div>
-  <div>
-    <label>Data de Uso *</label>
-    <input type="date" id="datauso" required>
-  </div>
+      <div>
+        <label>Data de Uso *</label>
+        <input type="date" id="datauso" required>
+      </div>
 
-  <div>
-    <label>Quantidade de dias (máx. 5)</label>
-    <select id="qtdDias">
-      <option value="1">1 dia</option>
-      <option value="2">2 dias</option>
-      <option value="3">3 dias</option>
-      <option value="4">4 dias</option>
-      <option value="5">5 dias</option>
-    </select>
-  </div>
-</div>
+      <div>
+        <label>Quantidade de dias (máx. 5)</label>
+        <select id="qtdDias">
+          <option value="1">1 dia</option>
+          <option value="2">2 dias</option>
+          <option value="3">3 dias</option>
+          <option value="4">4 dias</option>
+          <option value="5">5 dias</option>
+        </select>
+      </div>
+    </div>
 
-<div id="previewDias" class="preview-box"></div>
+    <div id="previewDias" class="preview-box"></div>
 
     <div class="form-grid">
       <div>
@@ -376,28 +378,44 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // CAMPOS
-  const nome = document.getElementById("nome");
-  const email = document.getElementById("email");
-  const matricula = document.getElementById("matricula");
+  const nome       = document.getElementById("nome");
+  const email      = document.getElementById("email");
+  const matricula  = document.getElementById("matricula");
+  const regionalEl = document.getElementById("regional");
 
+  // Preenche matrícula
   matricula.value = matriculaSalva;
   matricula.readOnly = true;
   matricula.style.background = "#e9ecef";
 
-  // --- BUSCA NO WORKER ---
+  // 🔹 Tenta usar regional do localStorage primeiro (se já tiver salvo do login)
+  const regLS = (localStorage.getItem("regional") || "").toUpperCase().trim();
+  if (regionalEl && regLS && ["LESTE","CENTRO","OESTE"].includes(regLS)) {
+    regionalEl.value = regLS;
+  }
+
+  // --- BUSCA NO WORKER (colaborador, inclusive regional do SQL) ---
   try {
     const resp = await fetch(`https://long-hall-0aaa.pedro-fillype.workers.dev/colaborador?matricula=${matriculaSalva}`);
     const json = await resp.json();
 
     if (json.ok && json.dados) {
-      nome.value = json.dados.nome;
+      nome.value  = json.dados.nome;
       email.value = json.dados.email;
 
-      nome.readOnly = true;
+      nome.readOnly  = true;
       email.readOnly = true;
 
-      nome.style.background = "#e9ecef";
+      nome.style.background  = "#e9ecef";
       email.style.background = "#e9ecef";
+
+      // 🔹 Regional vinda da coluna do SQL
+      const regDb = (json.dados.regional || "").toUpperCase().trim();
+      if (regionalEl && regDb && ["LESTE","CENTRO","OESTE"].includes(regDb)) {
+        regionalEl.value = regDb;
+        // mantém sincronizado com o login
+        localStorage.setItem("regional", regDb);
+      }
     }
   } catch (err) {
     console.error("Erro ao buscar dados:", err);
