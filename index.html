@@ -214,18 +214,7 @@
         <label>Polo *</label>
         <select id="polo" required>
           <option value="">Selecione...</option>
-          <option>João Pessoa</option>
-          <option>Itabaiana</option>
-          <option>Mamanguape</option>
-          <option>Borborema</option>
-          <option>Campina Grande</option>
-          <option>Monteiro</option>
-          <option>Guarabira</option>
-          <option>Esperança</option>
-          <option>Itaporanga</option>
-          <option>Sousa</option>
-          <option>Patos</option>
-          <option>Catolé do Rocha</option>
+          <!-- opções serão preenchidas via JS -->
         </select>
       </div>
     </div>
@@ -325,6 +314,71 @@ function logout(){
   window.location.href = "https://coec-epb.github.io/login/";
 }
 
+/* mapas de polos por regional */
+const MAP_POLOS = {
+  LESTE: [
+    "João Pessoa",
+    "Itabaiana",
+    "Mamanguape"
+  ],
+  CENTRO: [
+    "Borborema",
+    "Campina Grande",
+    "Monteiro",
+    "Esperança",
+    "Guarabira"
+  ],
+  OESTE: [
+    "Catolé do Rocha",
+    "Itaporanga",
+    "Patos",
+    "Sousa"
+  ]
+};
+
+// todos os polos (caso regional não esteja definida)
+const TODOS_POLOS = [
+  "João Pessoa",
+  "Itabaiana",
+  "Mamanguape",
+  "Borborema",
+  "Campina Grande",
+  "Monteiro",
+  "Esperança",
+  "Guarabira",
+  "Catolé do Rocha",
+  "Itaporanga",
+  "Patos",
+  "Sousa"
+];
+
+/* helper pra preencher o select de polos */
+function preencherPolos(regional, selectPolo) {
+  if (!selectPolo) return;
+
+  const reg = (regional || "").toUpperCase().trim();
+
+  // limpa opções
+  selectPolo.innerHTML = "";
+  const optDefault = document.createElement("option");
+  optDefault.value = "";
+  optDefault.textContent = "Selecione...";
+  selectPolo.appendChild(optDefault);
+
+  let lista = TODOS_POLOS;
+
+  if (reg && MAP_POLOS[reg]) {
+    lista = MAP_POLOS[reg];
+  }
+
+  lista.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p;
+    opt.textContent = p;
+    selectPolo.appendChild(opt);
+  });
+}
+
 /* pequeno helper pra travar o select regional bonitinho */
 function travarRegionalSelect(sel) {
   if (!sel) return;
@@ -391,6 +445,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const email      = document.getElementById("email");
   const matricula  = document.getElementById("matricula");
   const regionalEl = document.getElementById("regional");
+  const poloEl     = document.getElementById("polo");
 
   // Preenche matrícula
   matricula.value = matriculaSalva;
@@ -401,8 +456,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const regLS = (localStorage.getItem("regional") || "").toUpperCase().trim();
   if (regionalEl && regLS && ["LESTE","CENTRO","OESTE"].includes(regLS)) {
     regionalEl.value = regLS;
-    // já trava o select se veio do login
     travarRegionalSelect(regionalEl);
+    preencherPolos(regLS, poloEl);
+  } else {
+    // se não tiver regional ainda, mostra todos os polos
+    preencherPolos("", poloEl);
   }
 
   // --- BUSCA NO WORKER (colaborador, inclusive regional do SQL) ---
@@ -420,14 +478,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       nome.style.background  = "#e9ecef";
       email.style.background = "#e9ecef";
 
-      // 🔹 Regional vinda da coluna do SQL
+      // 🔹 Regional vinda da coluna do SQL (sobrepõe o localStorage se existir)
       const regDb = (json.dados.regional || "").toUpperCase().trim();
       if (regionalEl && regDb && ["LESTE","CENTRO","OESTE"].includes(regDb)) {
         regionalEl.value = regDb;
-        // mantém sincronizado com o login
         localStorage.setItem("regional", regDb);
-        // e trava o select de vez
         travarRegionalSelect(regionalEl);
+        preencherPolos(regDb, poloEl);
       }
     }
   } catch (err) {
