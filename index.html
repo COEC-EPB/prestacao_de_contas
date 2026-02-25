@@ -325,6 +325,15 @@ function logout(){
   window.location.href = "https://coec-epb.github.io/login/";
 }
 
+/* pequeno helper pra travar o select regional bonitinho */
+function travarRegionalSelect(sel) {
+  if (!sel) return;
+  if (!sel.value) return; // só trava se tiver valor válido
+  sel.disabled = true;
+  sel.style.background = "#e9ecef";
+  sel.style.cursor = "not-allowed";
+}
+
 /* 🔹 INICIALIZAÇÃO */
 document.addEventListener("DOMContentLoaded", async () => {
 
@@ -392,6 +401,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const regLS = (localStorage.getItem("regional") || "").toUpperCase().trim();
   if (regionalEl && regLS && ["LESTE","CENTRO","OESTE"].includes(regLS)) {
     regionalEl.value = regLS;
+    // já trava o select se veio do login
+    travarRegionalSelect(regionalEl);
   }
 
   // --- BUSCA NO WORKER (colaborador, inclusive regional do SQL) ---
@@ -415,6 +426,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         regionalEl.value = regDb;
         // mantém sincronizado com o login
         localStorage.setItem("regional", regDb);
+        // e trava o select de vez
+        travarRegionalSelect(regionalEl);
       }
     }
   } catch (err) {
