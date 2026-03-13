@@ -176,6 +176,11 @@
     text-align: center;
     margin-top: 10px;
   }
+  #regional:disabled {
+  background: #e9ecef;
+  cursor: not-allowed;
+  color: #495057;
+}
 </style>
 </head>
 <body>
@@ -204,10 +209,12 @@
     <div class="form-grid">
       <div>
         <label>Regional *</label>
-        <select id="regional" required>
-          <option value="">Selecione...</option>
-          <option>LESTE</option><option>CENTRO</option><option>OESTE</option>
-        </select>
+        <select id="regional" required disabled>
+        <option value="">Selecione...</option>
+        <option>LESTE</option>
+        <option>CENTRO</option>
+        <option>OESTE</option>
+      </select>
       </div>
 
       <div>
