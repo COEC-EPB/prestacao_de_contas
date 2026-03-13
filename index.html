@@ -9,53 +9,53 @@
 
 <style>
   .form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  margin-bottom: 14px;
-}
-
-.form-grid label {
-  font-weight: 600;
-  margin-bottom: 4px;
-  display: block;
-}
-
-/* MOBILE */
-@media (max-width: 768px) {
-  .form-grid {
-    grid-template-columns: 1fr;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-bottom: 14px;
   }
-}
-  /* PREVIEW DE DIAS */
-.preview-box {
-  background: #f4f8fb;
-  border: 1px solid #d0e3ef;
-  border-radius: 10px;
-  padding: 12px;
-  margin-top: 8px;
-  font-size: 14px;
-}
 
-.preview-box strong {
-  color: var(--energisa-blue-dark);
-}
+  .form-grid label {
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+  }
 
-.preview-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 6px;
-  margin-top: 8px;
-}
+  @media (max-width: 768px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 
-.preview-item {
-  background: white;
-  border: 1px solid #cfd8dc;
-  border-radius: 8px;
-  padding: 6px;
-  text-align: center;
-  font-weight: 600;
-}
+  .preview-box {
+    background: #f4f8fb;
+    border: 1px solid #d0e3ef;
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 8px;
+    font-size: 14px;
+  }
+
+  .preview-box strong {
+    color: var(--energisa-blue-dark);
+  }
+
+  .preview-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .preview-item {
+    background: white;
+    border: 1px solid #cfd8dc;
+    border-radius: 8px;
+    padding: 6px;
+    text-align: center;
+    font-weight: 600;
+  }
+
   :root {
     --energisa-blue: #0097CE;
     --energisa-blue-dark: #0079a6;
@@ -66,13 +66,13 @@
   }
 
   * { box-sizing: border-box; }
+
   body {
     font-family: "Segoe UI", Roboto, sans-serif;
     background: var(--bg-soft);
     margin: 0;
   }
 
-  /* HEADER */
   .header {
     background: var(--energisa-blue);
     color: white;
@@ -82,7 +82,12 @@
     align-items: center;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   }
-  .header h2 { margin: 0; font-weight: 700; letter-spacing: 1px; }
+
+  .header h2 {
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
 
   .logout-btn {
     background: var(--energisa-orange);
@@ -93,9 +98,11 @@
     cursor: pointer;
     font-weight: 600;
   }
-  .logout-btn:hover { background: #d65c18; }
 
-  /* CARD */
+  .logout-btn:hover {
+    background: #d65c18;
+  }
+
   .card {
     max-width: 900px;
     margin: 30px auto;
@@ -114,8 +121,15 @@
     font-weight: 800;
   }
 
-  form { display: grid; gap: 15px; }
-  label { font-weight: 600; margin-bottom: 4px; }
+  form {
+    display: grid;
+    gap: 15px;
+  }
+
+  label {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
 
   input, select, textarea {
     width: 100%;
@@ -125,20 +139,35 @@
     font-size: 15px;
     background: #fdfdfd;
   }
+
   input:focus, select:focus, textarea:focus {
     border-color: var(--energisa-blue);
     box-shadow: 0 0 0 2px rgba(0,151,206,0.25);
+    outline: none;
   }
 
-  /* GRID */
-  .row {R
+  #regional:disabled,
+  #matricula[readonly],
+  #nome[readonly],
+  #email[readonly],
+  #geo[readonly] {
+    background: #e9ecef;
+    cursor: not-allowed;
+    color: #495057;
+  }
+
+  .row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 18px;
   }
-  @media(max-width: 720px) { .row { grid-template-columns: 1fr; } }
 
-  /* BUTTONS */
+  @media(max-width: 720px) {
+    .row {
+      grid-template-columns: 1fr;
+    }
+  }
+
   button {
     background: var(--energisa-blue);
     color: white;
@@ -149,12 +178,21 @@
     border-radius: 10px;
     cursor: pointer;
   }
-  button:hover { background: var(--energisa-blue-dark); }
 
-  .small { padding: 10px; font-size: 13px; background: var(--energisa-orange); }
-  .small:hover { background: #d85e1c; }
+  button:hover {
+    background: var(--energisa-blue-dark);
+  }
 
-  /* LINK DASHBOARD */
+  .small {
+    padding: 10px;
+    font-size: 13px;
+    background: var(--energisa-orange);
+  }
+
+  .small:hover {
+    background: #d85e1c;
+  }
+
   .dashboard-btn {
     display: block;
     background: var(--energisa-blue-dark);
@@ -166,7 +204,10 @@
     font-weight: 700;
     text-decoration: none;
   }
-  .dashboard-btn:hover { background: #005f85; }
+
+  .dashboard-btn:hover {
+    background: #005f85;
+  }
 
   .muted {
     color: #666;
@@ -178,7 +219,6 @@
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
   <h2><i class="bi bi-file-earmark-text"></i> Prestação de Contas - ADD</h2>
   <button class="logout-btn" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Sair</button>
@@ -202,9 +242,11 @@
     <div class="form-grid">
       <div>
         <label>Regional *</label>
-        <select id="regional" required>
+        <select id="regional" required disabled>
           <option value="">Selecione...</option>
-          <option>LESTE</option><option>CENTRO</option><option>OESTE</option>
+          <option value="LESTE">LESTE</option>
+          <option value="CENTRO">CENTRO</option>
+          <option value="OESTE">OESTE</option>
         </select>
       </div>
 
@@ -212,18 +254,6 @@
         <label>Polo *</label>
         <select id="polo" required>
           <option value="">Selecione...</option>
-          <option>João Pessoa</option>
-          <option>Itabaiana</option>
-          <option>Mamanguape</option>
-          <option>Borborema</option>
-          <option>Campina Grande</option>
-          <option>Monteiro</option>
-          <option>Guarabira</option>
-          <option>Esperança</option>
-          <option>Itaporanga</option>
-          <option>Sousa</option>
-          <option>Patos</option>
-          <option>Catolé do Rocha</option>
         </select>
       </div>
     </div>
@@ -233,24 +263,24 @@
         <label>Matrícula *</label>
         <input id="matricula" required>
       </div>
-  <div>
-    <label>Data de Uso *</label>
-    <input type="date" id="datauso" required>
-  </div>
+      <div>
+        <label>Data de Uso *</label>
+        <input type="date" id="datauso" required>
+      </div>
 
-  <div>
-    <label>Quantidade de dias (máx. 5)</label>
-    <select id="qtdDias">
-      <option value="1">1 dia</option>
-      <option value="2">2 dias</option>
-      <option value="3">3 dias</option>
-      <option value="4">4 dias</option>
-      <option value="5">5 dias</option>
-    </select>
-  </div>
-</div>
+      <div>
+        <label>Quantidade de dias (máx. 5)</label>
+        <select id="qtdDias">
+          <option value="1">1 dia</option>
+          <option value="2">2 dias</option>
+          <option value="3">3 dias</option>
+          <option value="4">4 dias</option>
+          <option value="5">5 dias</option>
+        </select>
+      </div>
+    </div>
 
-<div id="previewDias" class="preview-box"></div>
+    <div id="previewDias" class="preview-box"></div>
 
     <div class="form-grid">
       <div>
@@ -316,32 +346,112 @@
 </div>
 
 <script>
-
-/* 🔹 LOGOUT */
-function logout(){
+function logout() {
   localStorage.clear();
   window.location.href = "https://coec-epb.github.io/login/";
 }
 
-/* 🔹 INICIALIZAÇÃO */
-document.addEventListener("DOMContentLoaded", async () => {
+const MAP_POLOS = {
+  LESTE: ["João Pessoa", "Itabaiana", "Mamanguape"],
+  CENTRO: ["Borborema", "Campina Grande", "Monteiro", "Esperança", "Guarabira"],
+  OESTE: ["Catolé do Rocha", "Itaporanga", "Patos", "Sousa"]
+};
 
-  // 🔹 LIMITA DATA: até 30 dias pra trás e no máximo 7 dias pra frente
+const TODOS_POLOS = [
+  "João Pessoa", "Itabaiana", "Mamanguape",
+  "Borborema", "Campina Grande", "Monteiro", "Esperança", "Guarabira",
+  "Catolé do Rocha", "Itaporanga", "Patos", "Sousa"
+];
+
+function preencherPolos(regional, selectPolo) {
+  if (!selectPolo) return;
+
+  const reg = normalizarRegional(regional);
+
+  selectPolo.innerHTML = "";
+
+  const optDefault = document.createElement("option");
+  optDefault.value = "";
+  optDefault.textContent = "Selecione...";
+  selectPolo.appendChild(optDefault);
+
+  let lista = TODOS_POLOS;
+  if (reg && MAP_POLOS[reg]) {
+    lista = MAP_POLOS[reg];
+  }
+
+  lista.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p;
+    opt.textContent = p;
+    selectPolo.appendChild(opt);
+  });
+}
+
+function travarRegionalSelect(sel) {
+  if (!sel) return;
+  sel.disabled = true;
+  sel.style.background = "#e9ecef";
+  sel.style.cursor = "not-allowed";
+}
+
+function destravarRegionalSelect(sel) {
+  if (!sel) return;
+  sel.disabled = false;
+  sel.style.background = "";
+  sel.style.cursor = "";
+}
+
+function normalizarRegional(valor) {
+  const v = String(valor || "")
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toUpperCase();
+
+  if (v === "LESTE") return "LESTE";
+  if (v === "CENTRO") return "CENTRO";
+  if (v === "OESTE") return "OESTE";
+  return "";
+}
+
+function extrairRegional(dados) {
+  if (!dados || typeof dados !== "object") return "";
+
+  return normalizarRegional(
+    dados.regional ??
+    dados.Regional ??
+    dados.REGIONAL ??
+    dados.regiao ??
+    dados.Regiao ??
+    dados.REGIAO ??
+    dados.regional_nome ??
+    dados.regionalName ??
+    ""
+  );
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
   const dataUsoInput = document.getElementById("datauso");
+  const nome = document.getElementById("nome");
+  const email = document.getElementById("email");
+  const matricula = document.getElementById("matricula");
+  const regionalEl = document.getElementById("regional");
+  const poloEl = document.getElementById("polo");
 
   const hoje = new Date();
-  hoje.setHours(0,0,0,0);
+  hoje.setHours(0, 0, 0, 0);
 
   const minDate = new Date(hoje);
-  minDate.setDate(hoje.getDate() - 30); // 30 dias pra trás
+  minDate.setDate(hoje.getDate() - 30);
 
   const maxDate = new Date(hoje);
-  maxDate.setDate(hoje.getDate() + 7);  // 7 dias pra frente
+  maxDate.setDate(hoje.getDate() + 7);
 
-  function toISODate(d){
+  function toISODate(d) {
     const x = new Date(d);
-    x.setHours(0,0,0,0);
-    return x.toISOString().slice(0,10);
+    x.setHours(0, 0, 0, 0);
+    return x.toISOString().slice(0, 10);
   }
 
   dataUsoInput.min = toISODate(minDate);
@@ -351,7 +461,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!dataUsoInput.value) return;
 
     const sel = new Date(dataUsoInput.value + "T00:00:00");
-    sel.setHours(0,0,0,0);
+    sel.setHours(0, 0, 0, 0);
 
     if (sel < minDate) {
       alert("A data não pode ser anterior a 30 dias atrás.");
@@ -363,10 +473,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       dataUsoInput.value = toISODate(maxDate);
     }
 
-    atualizarPreview(); // mantém o preview atualizado
+    atualizarPreview();
   });
 
-  // --- VALIDA LOGIN ---
   const matriculaSalva = localStorage.getItem("matricula");
 
   if (!matriculaSalva) {
@@ -375,36 +484,57 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // CAMPOS
-  const nome = document.getElementById("nome");
-  const email = document.getElementById("email");
-  const matricula = document.getElementById("matricula");
-
   matricula.value = matriculaSalva;
   matricula.readOnly = true;
   matricula.style.background = "#e9ecef";
 
-  // --- BUSCA NO WORKER ---
+  preencherPolos("", poloEl);
+
+  const regLS = normalizarRegional(localStorage.getItem("regional") || "");
+  if (regLS) {
+    regionalEl.value = regLS;
+    preencherPolos(regLS, poloEl);
+    travarRegionalSelect(regionalEl);
+  } else {
+    destravarRegionalSelect(regionalEl);
+  }
+
   try {
-    const resp = await fetch(`https://long-hall-0aaa.pedro-fillype.workers.dev/colaborador?matricula=${matriculaSalva}`);
+    const url = `https://long-hall-0aaa.pedro-fillype.workers.dev/colaborador?matricula=${encodeURIComponent(matriculaSalva)}`;
+    const resp = await fetch(url);
     const json = await resp.json();
 
+    console.log("Resposta /colaborador:", json);
+    console.log("Dados /colaborador:", json?.dados);
+
     if (json.ok && json.dados) {
-      nome.value = json.dados.nome;
-      email.value = json.dados.email;
+      nome.value = json.dados.nome || "";
+      email.value = json.dados.email || "";
 
       nome.readOnly = true;
       email.readOnly = true;
 
       nome.style.background = "#e9ecef";
       email.style.background = "#e9ecef";
+
+      const regDb = extrairRegional(json.dados);
+
+      console.log("Regional extraída:", regDb);
+
+      if (regDb) {
+        regionalEl.value = regDb;
+        localStorage.setItem("regional", regDb);
+        preencherPolos(regDb, poloEl);
+        travarRegionalSelect(regionalEl);
+      } else {
+        console.warn("A regional não veio do banco ou veio com nome/formato diferente.");
+      }
     }
   } catch (err) {
     console.error("Erro ao buscar dados:", err);
   }
 });
 
-/* 🔹 GEOLOCALIZAÇÃO */
 document.getElementById("btnGeo").addEventListener("click", () => {
   const btnGeo = document.getElementById("btnGeo");
   const geo = document.getElementById("geo");
@@ -432,7 +562,6 @@ document.getElementById("btnGeo").addEventListener("click", () => {
   );
 });
 
-/* 🔹 ENVIO DO FORMULÁRIO (MULTI-DIAS COM TRATAMENTO DE 409) */
 document.getElementById("addForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -445,6 +574,11 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
   const dataBaseStr = get("datauso");
   const dataBase = dataBaseStr ? new Date(dataBaseStr + "T00:00:00") : null;
   const qtdDias = Number(document.getElementById("qtdDias").value || "1");
+  const regionalFixa = normalizarRegional(
+    localStorage.getItem("regional") ||
+    document.getElementById("regional").value ||
+    ""
+  );
 
   if (!dataBase || isNaN(dataBase.getTime())) {
     alert("Informe uma data de uso válida.");
@@ -460,8 +594,15 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
     return;
   }
 
+  if (!regionalFixa) {
+    alert("A regional não foi carregada. Verifique o cadastro do colaborador.");
+    btn.disabled = false;
+    btn.innerText = "Enviar Registro";
+    return;
+  }
+
   let diasSalvos = 0;
-  const diasPulados = []; // já tinham prestação
+  const diasPulados = [];
   let erroCritico = null;
 
   try {
@@ -473,7 +614,7 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
       const payload = {
         nome: get("nome"),
         email: get("email"),
-        regional: get("regional"),
+        regional: regionalFixa,
         polo: get("polo"),
         matricula: get("matricula"),
         datauso: dataFormatada,
@@ -498,15 +639,15 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
       );
 
       let result = {};
-      try { result = await resp.json(); } catch {}
+      try {
+        result = await resp.json();
+      } catch {}
 
-      // 🔸 Caso de duplicidade (409) → só marca como pulado e continua
       if (resp.status === 409) {
         diasPulados.push(dataFormatada);
         continue;
       }
 
-      // 🔴 Qualquer outro erro para o loop
       if (!resp.ok || result.ok === false) {
         erroCritico = {
           dia: dataFormatada,
@@ -518,7 +659,6 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
       diasSalvos++;
     }
 
-    // Monta mensagem final
     let msg = "";
 
     if (diasSalvos > 0) {
@@ -547,7 +687,6 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
 
     alert(msg.trim());
 
-    // Se pelo menos 1 dia foi salvo, atualiza página
     if (diasSalvos > 0) {
       setTimeout(() => location.reload(), 500);
     } else {
@@ -562,9 +701,6 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
   }
 });
 
-/* ============================
-   🔹 PREVIEW DOS DIAS
-============================ */
 const dataUsoInput2 = document.getElementById("datauso");
 const qtdDiasInput = document.getElementById("qtdDias");
 const previewDias = document.getElementById("previewDias");
