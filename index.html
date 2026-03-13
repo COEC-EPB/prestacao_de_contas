@@ -9,55 +9,53 @@
 
 <style>
   .form-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-    margin-bottom: 14px;
-  }
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-bottom: 14px;
+}
 
-  .form-grid label {
-    font-weight: 600;
-    margin-bottom: 4px;
-    display: block;
-  }
+.form-grid label {
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
 
-  /* MOBILE */
-  @media (max-width: 768px) {
-    .form-grid {
-      grid-template-columns: 1fr;
-    }
+/* MOBILE */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
   }
-
+}
   /* PREVIEW DE DIAS */
-  .preview-box {
-    background: #f4f8fb;
-    border: 1px solid #d0e3ef;
-    border-radius: 10px;
-    padding: 12px;
-    margin-top: 8px;
-    font-size: 14px;
-  }
+.preview-box {
+  background: #f4f8fb;
+  border: 1px solid #d0e3ef;
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 8px;
+  font-size: 14px;
+}
 
-  .preview-box strong {
-    color: var(--energisa-blue-dark);
-  }
+.preview-box strong {
+  color: var(--energisa-blue-dark);
+}
 
-  .preview-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 6px;
-    margin-top: 8px;
-  }
+.preview-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
 
-  .preview-item {
-    background: white;
-    border: 1px solid #cfd8dc;
-    border-radius: 8px;
-    padding: 6px;
-    text-align: center;
-    font-weight: 600;
-  }
-
+.preview-item {
+  background: white;
+  border: 1px solid #cfd8dc;
+  border-radius: 8px;
+  padding: 6px;
+  text-align: center;
+  font-weight: 600;
+}
   :root {
     --energisa-blue: #0097CE;
     --energisa-blue-dark: #0079a6;
@@ -133,7 +131,7 @@
   }
 
   /* GRID */
-  .row {
+  .row {R
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 18px;
@@ -214,7 +212,18 @@
         <label>Polo *</label>
         <select id="polo" required>
           <option value="">Selecione...</option>
-          <!-- opções serão preenchidas via JS -->
+          <option>João Pessoa</option>
+          <option>Itabaiana</option>
+          <option>Mamanguape</option>
+          <option>Borborema</option>
+          <option>Campina Grande</option>
+          <option>Monteiro</option>
+          <option>Guarabira</option>
+          <option>Esperança</option>
+          <option>Itaporanga</option>
+          <option>Sousa</option>
+          <option>Patos</option>
+          <option>Catolé do Rocha</option>
         </select>
       </div>
     </div>
@@ -224,24 +233,24 @@
         <label>Matrícula *</label>
         <input id="matricula" required>
       </div>
-      <div>
-        <label>Data de Uso *</label>
-        <input type="date" id="datauso" required>
-      </div>
+  <div>
+    <label>Data de Uso *</label>
+    <input type="date" id="datauso" required>
+  </div>
 
-      <div>
-        <label>Quantidade de dias (máx. 5)</label>
-        <select id="qtdDias">
-          <option value="1">1 dia</option>
-          <option value="2">2 dias</option>
-          <option value="3">3 dias</option>
-          <option value="4">4 dias</option>
-          <option value="5">5 dias</option>
-        </select>
-      </div>
-    </div>
+  <div>
+    <label>Quantidade de dias (máx. 5)</label>
+    <select id="qtdDias">
+      <option value="1">1 dia</option>
+      <option value="2">2 dias</option>
+      <option value="3">3 dias</option>
+      <option value="4">4 dias</option>
+      <option value="5">5 dias</option>
+    </select>
+  </div>
+</div>
 
-    <div id="previewDias" class="preview-box"></div>
+<div id="previewDias" class="preview-box"></div>
 
     <div class="form-grid">
       <div>
@@ -314,80 +323,6 @@ function logout(){
   window.location.href = "https://coec-epb.github.io/login/";
 }
 
-/* mapas de polos por regional */
-const MAP_POLOS = {
-  LESTE: [
-    "João Pessoa",
-    "Itabaiana",
-    "Mamanguape"
-  ],
-  CENTRO: [
-    "Borborema",
-    "Campina Grande",
-    "Monteiro",
-    "Esperança",
-    "Guarabira"
-  ],
-  OESTE: [
-    "Catolé do Rocha",
-    "Itaporanga",
-    "Patos",
-    "Sousa"
-  ]
-};
-
-// todos os polos (caso regional não esteja definida)
-const TODOS_POLOS = [
-  "João Pessoa",
-  "Itabaiana",
-  "Mamanguape",
-  "Borborema",
-  "Campina Grande",
-  "Monteiro",
-  "Esperança",
-  "Guarabira",
-  "Catolé do Rocha",
-  "Itaporanga",
-  "Patos",
-  "Sousa"
-];
-
-/* helper pra preencher o select de polos */
-function preencherPolos(regional, selectPolo) {
-  if (!selectPolo) return;
-
-  const reg = (regional || "").toUpperCase().trim();
-
-  // limpa opções
-  selectPolo.innerHTML = "";
-  const optDefault = document.createElement("option");
-  optDefault.value = "";
-  optDefault.textContent = "Selecione...";
-  selectPolo.appendChild(optDefault);
-
-  let lista = TODOS_POLOS;
-
-  if (reg && MAP_POLOS[reg]) {
-    lista = MAP_POLOS[reg];
-  }
-
-  lista.forEach(p => {
-    const opt = document.createElement("option");
-    opt.value = p;
-    opt.textContent = p;
-    selectPolo.appendChild(opt);
-  });
-}
-
-/* pequeno helper pra travar o select regional bonitinho */
-function travarRegionalSelect(sel) {
-  if (!sel) return;
-  if (!sel.value) return; // só trava se tiver valor válido
-  sel.disabled = true;
-  sel.style.background = "#e9ecef";
-  sel.style.cursor = "not-allowed";
-}
-
 /* 🔹 INICIALIZAÇÃO */
 document.addEventListener("DOMContentLoaded", async () => {
 
@@ -441,51 +376,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // CAMPOS
-  const nome       = document.getElementById("nome");
-  const email      = document.getElementById("email");
-  const matricula  = document.getElementById("matricula");
-  const regionalEl = document.getElementById("regional");
-  const poloEl     = document.getElementById("polo");
+  const nome = document.getElementById("nome");
+  const email = document.getElementById("email");
+  const matricula = document.getElementById("matricula");
 
-  // Preenche matrícula
   matricula.value = matriculaSalva;
   matricula.readOnly = true;
   matricula.style.background = "#e9ecef";
 
-  // 🔹 Tenta usar regional do localStorage primeiro (se já tiver salvo do login)
-  const regLS = (localStorage.getItem("regional") || "").toUpperCase().trim();
-  if (regionalEl && regLS && ["LESTE","CENTRO","OESTE"].includes(regLS)) {
-    regionalEl.value = regLS;
-    travarRegionalSelect(regionalEl);
-    preencherPolos(regLS, poloEl);
-  } else {
-    // se não tiver regional ainda, mostra todos os polos
-    preencherPolos("", poloEl);
-  }
-
-  // --- BUSCA NO WORKER (colaborador, inclusive regional do SQL) ---
+  // --- BUSCA NO WORKER ---
   try {
     const resp = await fetch(`https://long-hall-0aaa.pedro-fillype.workers.dev/colaborador?matricula=${matriculaSalva}`);
     const json = await resp.json();
 
     if (json.ok && json.dados) {
-      nome.value  = json.dados.nome;
+      nome.value = json.dados.nome;
       email.value = json.dados.email;
 
-      nome.readOnly  = true;
+      nome.readOnly = true;
       email.readOnly = true;
 
-      nome.style.background  = "#e9ecef";
+      nome.style.background = "#e9ecef";
       email.style.background = "#e9ecef";
-
-      // 🔹 Regional vinda da coluna do SQL (sobrepõe o localStorage se existir)
-      const regDb = (json.dados.regional || "").toUpperCase().trim();
-      if (regionalEl && regDb && ["LESTE","CENTRO","OESTE"].includes(regDb)) {
-        regionalEl.value = regDb;
-        localStorage.setItem("regional", regDb);
-        travarRegionalSelect(regionalEl);
-        preencherPolos(regDb, poloEl);
-      }
     }
   } catch (err) {
     console.error("Erro ao buscar dados:", err);
