@@ -431,6 +431,21 @@ function extrairRegional(dados) {
   );
 }
 
+function atualizarObrigatoriedadeObservacao() {
+  const tipo = document.getElementById("tiporefeicao").value.trim().toUpperCase();
+  const obs = document.getElementById("observacao");
+
+  if (tipo === "EXTRA") {
+    obs.required = true;
+    obs.placeholder = "Observação obrigatória para refeição EXTRA";
+    obs.style.borderColor = "#F36F21";
+  } else {
+    obs.required = false;
+    obs.placeholder = "";
+    obs.style.borderColor = "";
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const dataUsoInput = document.getElementById("datauso");
   const nome = document.getElementById("nome");
@@ -438,6 +453,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const matricula = document.getElementById("matricula");
   const regionalEl = document.getElementById("regional");
   const poloEl = document.getElementById("polo");
+  const tipoRefeicaoEl = document.getElementById("tiporefeicao");
 
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
@@ -475,6 +491,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     atualizarPreview();
   });
+
+  tipoRefeicaoEl.addEventListener("change", atualizarObrigatoriedadeObservacao);
+  atualizarObrigatoriedadeObservacao();
 
   const matriculaSalva = localStorage.getItem("matricula");
 
@@ -571,6 +590,17 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
 
   const get = id => document.getElementById(id).value.trim();
 
+  const tipoRefeicao = get("tiporefeicao").toUpperCase();
+  const observacao = get("observacao");
+
+  if (tipoRefeicao === "EXTRA" && !observacao) {
+    alert("Para refeição EXTRA, a observação é obrigatória.");
+    btn.disabled = false;
+    btn.innerText = "Enviar Registro";
+    document.getElementById("observacao").focus();
+    return;
+  }
+
   const dataBaseStr = get("datauso");
   const dataBase = dataBaseStr ? new Date(dataBaseStr + "T00:00:00") : null;
   const qtdDias = Number(document.getElementById("qtdDias").value || "1");
@@ -618,14 +648,14 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
         polo: get("polo"),
         matricula: get("matricula"),
         datauso: dataFormatada,
-        tiporefeicao: get("tiporefeicao"),
+        tiporefeicao: tipoRefeicao,
         horario: get("horario"),
         localidade: get("localidade"),
         gps: get("geo"),
         sequencia: get("sequencia"),
         osrrss: get("osrrss"),
         numeroadd: get("numeroadd"),
-        observacao: get("observacao")
+        observacao: observacao
       };
 
       const fd = new FormData();
@@ -643,10 +673,10 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
         result = await resp.json();
       } catch {}
 
-      if (resp.status === 409) {
-        diasPulados.push(dataFormatada);
-        continue;
-      }
+     if (resp.status === 409) {
+  diasPulados.push(`${dataFormatada} (${tipoRefeicao})`);
+  continue;
+}
 
       if (!resp.ok || result.ok === false) {
         erroCritico = {
