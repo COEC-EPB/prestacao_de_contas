@@ -27,35 +27,6 @@
     }
   }
 
-  .preview-box {
-    background: #f4f8fb;
-    border: 1px solid #d0e3ef;
-    border-radius: 10px;
-    padding: 12px;
-    margin-top: 8px;
-    font-size: 14px;
-  }
-
-  .preview-box strong {
-    color: var(--energisa-blue-dark);
-  }
-
-  .preview-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 6px;
-    margin-top: 8px;
-  }
-
-  .preview-item {
-    background: white;
-    border: 1px solid #cfd8dc;
-    border-radius: 8px;
-    padding: 6px;
-    text-align: center;
-    font-weight: 600;
-  }
-
   :root {
     --energisa-blue: #0097CE;
     --energisa-blue-dark: #0079a6;
@@ -267,20 +238,7 @@
         <label>Data de Uso *</label>
         <input type="date" id="datauso" required>
       </div>
-
-      <div>
-        <label>Quantidade de dias (máx. 5)</label>
-        <select id="qtdDias">
-          <option value="1">1 dia</option>
-          <option value="2">2 dias</option>
-          <option value="3">3 dias</option>
-          <option value="4">4 dias</option>
-          <option value="5">5 dias</option>
-        </select>
-      </div>
     </div>
-
-    <div id="previewDias" class="preview-box"></div>
 
     <div class="form-grid">
       <div>
@@ -299,7 +257,7 @@
     </div>
 
     <div>
-      <label>Local :</label>
+      <label>Local *</label>
       <input id="localidade" required>
     </div>
 
@@ -322,10 +280,10 @@
     <div class="row">
       <div>
         <label>Nº UC / OS / RR / SS *</label>
-<input id="osrrss" 
-    oninvalid="this.setCustomValidity('Obrigatoriamente informar a OS, SS ou ocorrência')"
-    oninput="this.setCustomValidity('')"
-  >
+        <input id="osrrss"
+          required
+          oninvalid="this.setCustomValidity('Obrigatoriamente informar a OS, SS ou ocorrência')"
+          oninput="this.setCustomValidity('')">
       </div>
       <div>
         <label>Número do ADD (opcional)</label>
@@ -334,8 +292,8 @@
     </div>
 
     <div>
-      <label>Observação *</label>
-      <textarea rows="3" id="observacao" required></textarea>
+      <label>Observação</label>
+      <textarea rows="3" id="observacao"></textarea>
     </div>
 
     <button id="btnSubmit">Enviar Registro</button>
@@ -491,8 +449,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       alert("A data não pode ser maior que 7 dias à frente.");
       dataUsoInput.value = toISODate(maxDate);
     }
-
-    atualizarPreview();
   });
 
   tipoRefeicaoEl.addEventListener("change", atualizarObrigatoriedadeObservacao);
@@ -595,6 +551,12 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
 
   const tipoRefeicao = get("tiporefeicao").toUpperCase();
   const observacao = get("observacao");
+  const dataBaseStr = get("datauso");
+  const regionalFixa = normalizarRegional(
+    localStorage.getItem("regional") ||
+    document.getElementById("regional").value ||
+    ""
+  );
 
   if (tipoRefeicao === "EXTRA" && !observacao) {
     alert("Para refeição EXTRA, a observação é obrigatória.");
@@ -604,24 +566,8 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
     return;
   }
 
-  const dataBaseStr = get("datauso");
-  const dataBase = dataBaseStr ? new Date(dataBaseStr + "T00:00:00") : null;
-  const qtdDias = Number(document.getElementById("qtdDias").value || "1");
-  const regionalFixa = normalizarRegional(
-    localStorage.getItem("regional") ||
-    document.getElementById("regional").value ||
-    ""
-  );
-
-  if (!dataBase || isNaN(dataBase.getTime())) {
+  if (!dataBaseStr) {
     alert("Informe uma data de uso válida.");
-    btn.disabled = false;
-    btn.innerText = "Enviar Registro";
-    return;
-  }
-
-  if (qtdDias < 1 || qtdDias > 5) {
-    alert("A quantidade de dias deve ser entre 1 e 5.");
     btn.disabled = false;
     btn.innerText = "Enviar Registro";
     return;
@@ -634,98 +580,55 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
     return;
   }
 
-  let diasSalvos = 0;
-  const diasPulados = [];
-  let erroCritico = null;
-
   try {
-    for (let i = 0; i < qtdDias; i++) {
-      const dataAtual = new Date(dataBase);
-      dataAtual.setDate(dataBase.getDate() + i);
-      const dataFormatada = dataAtual.toISOString().slice(0, 10);
+    const payload = {
+      nome: get("nome"),
+      email: get("email"),
+      regional: regionalFixa,
+      polo: get("polo"),
+      matricula: get("matricula"),
+      datauso: dataBaseStr,
+      tiporefeicao: tipoRefeicao,
+      horario: get("horario"),
+      localidade: get("localidade"),
+      gps: get("geo"),
+      sequencia: get("sequencia"),
+      osrrss: get("osrrss"),
+      numeroadd: get("numeroadd"),
+      observacao: observacao
+    };
 
-      const payload = {
-        nome: get("nome"),
-        email: get("email"),
-        regional: regionalFixa,
-        polo: get("polo"),
-        matricula: get("matricula"),
-        datauso: dataFormatada,
-        tiporefeicao: tipoRefeicao,
-        horario: get("horario"),
-        localidade: get("localidade"),
-        gps: get("geo"),
-        sequencia: get("sequencia"),
-        osrrss: get("osrrss"),
-        numeroadd: get("numeroadd"),
-        observacao: observacao
-      };
-
-      const fd = new FormData();
-      for (const [k, v] of Object.entries(payload)) {
-        fd.append(k, v);
-      }
-
-      const resp = await fetch(
-        "https://long-hall-0aaa.pedro-fillype.workers.dev/submit",
-        { method: "POST", body: fd }
-      );
-
-      let result = {};
-      try {
-        result = await resp.json();
-      } catch {}
-
-     if (resp.status === 409) {
-  diasPulados.push(`${dataFormatada} (${tipoRefeicao})`);
-  continue;
-}
-
-      if (!resp.ok || result.ok === false) {
-        erroCritico = {
-          dia: dataFormatada,
-          msg: result.error || `Erro ao enviar registro do dia ${dataFormatada}`
-        };
-        break;
-      }
-
-      diasSalvos++;
+    const fd = new FormData();
+    for (const [k, v] of Object.entries(payload)) {
+      fd.append(k, v);
     }
 
-    let msg = "";
+    const resp = await fetch(
+      "https://long-hall-0aaa.pedro-fillype.workers.dev/submit",
+      { method: "POST", body: fd }
+    );
 
-    if (diasSalvos > 0) {
-      msg += `✅ ${diasSalvos} dia(s) registrado(s) com sucesso.\n`;
-    }
+    let result = {};
+    try {
+      result = await resp.json();
+    } catch {}
 
-    if (diasPulados.length > 0) {
-      const formatados = diasPulados
-        .map(d => new Date(d + "T00:00:00").toLocaleDateString("pt-BR"))
-        .join(", ");
-      msg += `⚠️ Já existia prestação registrada para: ${formatados}.\n`;
-    }
-
-    if (erroCritico) {
-      const diaBR = new Date(erroCritico.dia + "T00:00:00").toLocaleDateString("pt-BR");
-      msg += `❌ Erro no dia ${diaBR}: ${erroCritico.msg}`;
-      alert(msg.trim());
+    if (resp.status === 409) {
+      alert("Já existe uma prestação registrada para esta data.");
       btn.disabled = false;
       btn.innerText = "Enviar Registro";
       return;
     }
 
-    if (!msg.trim()) {
-      msg = "Nenhuma alteração realizada.";
-    }
-
-    alert(msg.trim());
-
-    if (diasSalvos > 0) {
-      setTimeout(() => location.reload(), 500);
-    } else {
+    if (!resp.ok || result.ok === false) {
+      alert(result.error || "Erro ao enviar registro.");
       btn.disabled = false;
       btn.innerText = "Enviar Registro";
+      return;
     }
+
+    alert("✅ Registro enviado com sucesso.");
+    setTimeout(() => location.reload(), 500);
 
   } catch (err) {
     alert("Erro inesperado: " + err.message);
@@ -733,41 +636,6 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
     btn.innerText = "Enviar Registro";
   }
 });
-
-const dataUsoInput2 = document.getElementById("datauso");
-const qtdDiasInput = document.getElementById("qtdDias");
-const previewDias = document.getElementById("previewDias");
-
-function atualizarPreview() {
-  previewDias.innerHTML = "";
-
-  if (!dataUsoInput2.value) return;
-
-  const dataInicial = new Date(dataUsoInput2.value + "T00:00:00");
-  const qtd = Math.min(Number(qtdDiasInput.value || "1"), 5);
-
-  let html = `
-    <strong>📅 Dias que serão registrados</strong>
-    <div class="preview-list">
-  `;
-
-  for (let i = 0; i < qtd; i++) {
-    const d = new Date(dataInicial);
-    d.setDate(dataInicial.getDate() + i);
-
-    html += `
-      <div class="preview-item">
-        ${d.toLocaleDateString("pt-BR")}
-      </div>
-    `;
-  }
-
-  html += "</div>";
-  previewDias.innerHTML = html;
-}
-
-dataUsoInput2.addEventListener("change", atualizarPreview);
-qtdDiasInput.addEventListener("change", atualizarPreview);
 </script>
 </body>
 </html>
