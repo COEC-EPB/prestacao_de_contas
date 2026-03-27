@@ -281,7 +281,6 @@
       <div>
         <label>Nº UC / OS / RR / SS *</label>
         <input id="osrrss"
-          required
           oninvalid="this.setCustomValidity('Obrigatoriamente informar a OS, SS ou ocorrência')"
           oninput="this.setCustomValidity('')">
       </div>
@@ -293,7 +292,7 @@
 
     <div>
       <label>Observação *:</label>
-      <textarea rows="3" id="observacao" required></textarea>
+      <textarea rows="3" id="observacao"></textarea>
     </div>
 
     <button id="btnSubmit">Enviar Registro</button>
