@@ -34,6 +34,9 @@
     --bg-soft: #eef6fa;
     --bg-white: #ffffff;
     --text-dark: #333;
+    --danger-bg: #fff3f3;
+    --danger-border: #f1b5b5;
+    --danger-text: #b3261e;
   }
 
   * { box-sizing: border-box; }
@@ -186,6 +189,26 @@
     text-align: center;
     margin-top: 10px;
   }
+
+  .bloqueio-box {
+    display: none;
+    background: var(--danger-bg);
+    border: 1px solid var(--danger-border);
+    color: var(--danger-text);
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .bloqueio-box.show {
+    display: block;
+  }
+
+  .bloqueio-box strong {
+    display: block;
+    margin-bottom: 6px;
+  }
 </style>
 </head>
 <body>
@@ -239,6 +262,8 @@
         <input type="date" id="datauso" required>
       </div>
     </div>
+
+    <div id="bloqueioAviso" class="bloqueio-box"></div>
 
     <div class="form-grid">
       <div>
@@ -407,6 +432,73 @@ function atualizarObrigatoriedadeObservacao() {
   }
 }
 
+function toISODate(d) {
+  const ano = d.getFullYear();
+  const mes = String(d.getMonth() + 1).padStart(2, "0");
+  const dia = String(d.getDate()).padStart(2, "0");
+  return `${ano}-${mes}-${dia}`;
+}
+
+function formatarDataBR(data) {
+  const dia = String(data.getDate()).padStart(2, "0");
+  const mes = String(data.getMonth() + 1).padStart(2, "0");
+  const ano = data.getFullYear();
+  return `${dia}/${mes}/${ano}`;
+}
+
+function mostrarAvisoBloqueio(justificativa, datauso) {
+  const box = document.getElementById("bloqueioAviso");
+  box.innerHTML = `
+    <strong><i class="bi bi-lock-fill"></i> Dia bloqueado para lançamento</strong>
+    Data: ${datauso}<br>
+    Justificativa: ${justificativa}
+  `;
+  box.classList.add("show");
+}
+
+function esconderAvisoBloqueio() {
+  const box = document.getElementById("bloqueioAviso");
+  box.innerHTML = "";
+  box.classList.remove("show");
+}
+
+async function verificarBloqueioData(exibirAlert = true, limparCampo = false) {
+  const matricula = document.getElementById("matricula").value.trim();
+  const datauso = document.getElementById("datauso").value.trim();
+
+  esconderAvisoBloqueio();
+
+  if (!matricula || !datauso) return true;
+
+  try {
+    const resp = await fetch(
+      `https://long-hall-0aaa.pedro-fillype.workers.dev/verificar-bloqueio?matricula=${encodeURIComponent(matricula)}&datauso=${encodeURIComponent(datauso)}`
+    );
+
+    const json = await resp.json();
+
+    if (json.ok && json.bloqueado) {
+      const justificativa = json?.bloqueio?.justificativa || "Sem justificativa informada.";
+      mostrarAvisoBloqueio(justificativa, datauso.split("-").reverse().join("/"));
+
+      if (exibirAlert) {
+        alert(`Este dia está bloqueado para lançamento.\n\nJustificativa: ${justificativa}`);
+      }
+
+      if (limparCampo) {
+        document.getElementById("datauso").value = "";
+      }
+
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.error("Erro ao verificar bloqueio:", err);
+    return true;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const dataUsoInput = document.getElementById("datauso");
   const nome = document.getElementById("nome");
@@ -435,25 +527,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   const maxDate = new Date(hoje);
   maxDate.setDate(hoje.getDate() + 3);
 
-  function toISODate(d) {
-    const ano = d.getFullYear();
-    const mes = String(d.getMonth() + 1).padStart(2, "0");
-    const dia = String(d.getDate()).padStart(2, "0");
-    return `${ano}-${mes}-${dia}`;
-  }
-
-  function formatarDataBR(data) {
-    const dia = String(data.getDate()).padStart(2, "0");
-    const mes = String(data.getMonth() + 1).padStart(2, "0");
-    const ano = data.getFullYear();
-    return `${dia}/${mes}/${ano}`;
-  }
-
   dataUsoInput.min = toISODate(minDate);
   dataUsoInput.max = toISODate(maxDate);
 
-  dataUsoInput.addEventListener("change", () => {
-    if (!dataUsoInput.value) return;
+  dataUsoInput.addEventListener("change", async () => {
+    if (!dataUsoInput.value) {
+      esconderAvisoBloqueio();
+      return;
+    }
 
     const sel = new Date(dataUsoInput.value + "T00:00:00");
     sel.setHours(0, 0, 0, 0);
@@ -461,14 +542,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (sel < minDate) {
       alert(`A data não pode ser anterior a ${formatarDataBR(minDate)}.`);
       dataUsoInput.value = toISODate(minDate);
+      esconderAvisoBloqueio();
+      await verificarBloqueioData(false, false);
       return;
     }
 
     if (sel > maxDate) {
       alert(`A data não pode ser maior que ${formatarDataBR(maxDate)}.`);
       dataUsoInput.value = toISODate(maxDate);
+      esconderAvisoBloqueio();
+      await verificarBloqueioData(false, false);
       return;
     }
+
+    await verificarBloqueioData(true, true);
   });
 
   tipoRefeicaoEl.addEventListener("change", atualizarObrigatoriedadeObservacao);
@@ -600,6 +687,13 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
     return;
   }
 
+  const dataLiberada = await verificarBloqueioData(true, false);
+  if (!dataLiberada) {
+    btn.disabled = false;
+    btn.innerText = "Enviar Registro";
+    return;
+  }
+
   try {
     const payload = {
       nome: get("nome"),
@@ -635,6 +729,13 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
 
     if (resp.status === 409) {
       alert("Já existe uma prestação registrada para esta data.");
+      btn.disabled = false;
+      btn.innerText = "Enviar Registro";
+      return;
+    }
+
+    if (resp.status === 403) {
+      alert(result.error || "Este dia está bloqueado para lançamento.");
       btn.disabled = false;
       btn.innerText = "Enviar Registro";
       return;
