@@ -281,6 +281,7 @@
       <div>
         <label>Nº UC / OS / RR / SS *</label>
         <input id="osrrss"
+          required
           oninvalid="this.setCustomValidity('Obrigatoriamente informar a OS, SS ou ocorrência')"
           oninput="this.setCustomValidity('')">
       </div>
@@ -419,15 +420,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   hoje.setHours(0, 0, 0, 0);
 
   const minDate = new Date(hoje);
-  minDate.setDate(hoje.getDate() - 30);
+  minDate.setDate(hoje.getDate() - 3);
 
   const maxDate = new Date(hoje);
-  maxDate.setDate(hoje.getDate() + 7);
+  maxDate.setDate(hoje.getDate() + 3);
 
   function toISODate(d) {
-    const x = new Date(d);
-    x.setHours(0, 0, 0, 0);
-    return x.toISOString().slice(0, 10);
+    const ano = d.getFullYear();
+    const mes = String(d.getMonth() + 1).padStart(2, "0");
+    const dia = String(d.getDate()).padStart(2, "0");
+    return `${ano}-${mes}-${dia}`;
+  }
+
+  function formatarDataBR(data) {
+    const dia = String(data.getDate()).padStart(2, "0");
+    const mes = String(data.getMonth() + 1).padStart(2, "0");
+    const ano = data.getFullYear();
+    return `${dia}/${mes}/${ano}`;
   }
 
   dataUsoInput.min = toISODate(minDate);
@@ -440,13 +449,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     sel.setHours(0, 0, 0, 0);
 
     if (sel < minDate) {
-      alert("A data não pode ser anterior a 30 dias atrás.");
+      alert(`A data não pode ser anterior a ${formatarDataBR(minDate)}.`);
       dataUsoInput.value = toISODate(minDate);
+      return;
     }
 
     if (sel > maxDate) {
-      alert("A data não pode ser maior que 7 dias à frente.");
+      alert(`A data não pode ser maior que ${formatarDataBR(maxDate)}.`);
       dataUsoInput.value = toISODate(maxDate);
+      return;
     }
   });
 
