@@ -419,8 +419,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
 
-  const minDate = new Date(hoje);
-  minDate.setDate(hoje.getDate() - 3);
+  // Regra:
+  // - do dia 4 em diante: libera do 1º dia do mês atual até hoje + 3 dias
+  // - nos dias 1, 2 e 3: libera hoje - 3 dias até hoje + 3 dias
+  const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+  primeiroDiaMes.setHours(0, 0, 0, 0);
+
+  let minDate = new Date(primeiroDiaMes);
+
+  if (hoje.getDate() <= 3) {
+    minDate = new Date(hoje);
+    minDate.setDate(hoje.getDate() - 3);
+  }
 
   const maxDate = new Date(hoje);
   maxDate.setDate(hoje.getDate() + 3);
