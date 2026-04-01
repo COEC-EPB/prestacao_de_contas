@@ -456,7 +456,7 @@ function calcularJanelaPermitida() {
 
   if (hoje.getDate() <= 3) {
     minDate = new Date(hoje);
-    minDate.setDate(minDate.getDate() - 3);
+    minDate.setDate(minDate.getDate() - 30);
   } else {
     minDate = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
     minDate.setHours(0, 0, 0, 0);
