@@ -306,7 +306,7 @@
       <div>
         <label>Nº UC / OS / RR / SS (opcional)</label>
         <input id="osrrss"
-          oninvalid="this.setCustomValidity('Se possivel informar a OS, SS ou ocorrência')"
+          oninvalid="this.setCustomValidity('Se possível informar a OS, SS ou ocorrência')"
           oninput="this.setCustomValidity('')">
       </div>
       <div>
@@ -445,6 +445,36 @@ function formatarDataBR(data) {
   return `${dia}/${mes}/${ano}`;
 }
 
+function calcularJanelaPermitida() {
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+
+  const maxDate = new Date(hoje);
+  maxDate.setDate(maxDate.getDate() + 3);
+
+  let minDate;
+
+  if (hoje.getDate() <= 3) {
+    minDate = new Date(hoje);
+    minDate.setDate(minDate.getDate() - 3);
+  } else {
+    minDate = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    minDate.setHours(0, 0, 0, 0);
+  }
+
+  return { hoje, minDate, maxDate };
+}
+
+function dataDentroDaJanela(dataISO) {
+  if (!dataISO) return false;
+
+  const { minDate, maxDate } = calcularJanelaPermitida();
+  const sel = new Date(dataISO + "T00:00:00");
+  sel.setHours(0, 0, 0, 0);
+
+  return sel >= minDate && sel <= maxDate;
+}
+
 function mostrarAvisoBloqueio(justificativa, datauso) {
   const box = document.getElementById("bloqueioAviso");
   box.innerHTML = `
@@ -507,29 +537,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   const poloEl = document.getElementById("polo");
   const tipoRefeicaoEl = document.getElementById("tiporefeicao");
 
-  const hoje = new Date();
-  hoje.setHours(0, 0, 0, 0);
-
-  // Regra:
-  // - do dia 4 em diante: libera do 1º dia do mês atual até hoje + 3 dias
-  // - nos dias 1, 2 e 3: libera hoje - 3 dias até hoje + 3 dias
-  const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-  primeiroDiaMes.setHours(0, 0, 0, 0);
-
-  let minDate = new Date(primeiroDiaMes);
-
-  if (hoje.getDate() <= 3) {
-    minDate = new Date(hoje);
-    minDate.setDate(hoje.getDate() - 3);
+  function aplicarRegraData() {
+    const { minDate, maxDate } = calcularJanelaPermitida();
+    dataUsoInput.min = toISODate(minDate);
+    dataUsoInput.max = toISODate(maxDate);
+    return { minDate, maxDate };
   }
 
-  const maxDate = new Date(hoje);
-  maxDate.setDate(hoje.getDate() + 3);
+  aplicarRegraData();
 
-  dataUsoInput.min = toISODate(minDate);
-  dataUsoInput.max = toISODate(maxDate);
+  dataUsoInput.addEventListener("input", async () => {
+    const { minDate, maxDate } = aplicarRegraData();
 
-  dataUsoInput.addEventListener("change", async () => {
     if (!dataUsoInput.value) {
       esconderAvisoBloqueio();
       return;
@@ -540,17 +559,43 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (sel < minDate) {
       alert(`A data não pode ser anterior a ${formatarDataBR(minDate)}.`);
-      dataUsoInput.value = toISODate(minDate);
+      dataUsoInput.value = "";
       esconderAvisoBloqueio();
-      await verificarBloqueioData(false, false);
       return;
     }
 
     if (sel > maxDate) {
       alert(`A data não pode ser maior que ${formatarDataBR(maxDate)}.`);
-      dataUsoInput.value = toISODate(maxDate);
+      dataUsoInput.value = "";
       esconderAvisoBloqueio();
-      await verificarBloqueioData(false, false);
+      return;
+    }
+
+    await verificarBloqueioData(true, true);
+  });
+
+  dataUsoInput.addEventListener("change", async () => {
+    const { minDate, maxDate } = aplicarRegraData();
+
+    if (!dataUsoInput.value) {
+      esconderAvisoBloqueio();
+      return;
+    }
+
+    const sel = new Date(dataUsoInput.value + "T00:00:00");
+    sel.setHours(0, 0, 0, 0);
+
+    if (sel < minDate) {
+      alert(`A data não pode ser anterior a ${formatarDataBR(minDate)}.`);
+      dataUsoInput.value = "";
+      esconderAvisoBloqueio();
+      return;
+    }
+
+    if (sel > maxDate) {
+      alert(`A data não pode ser maior que ${formatarDataBR(maxDate)}.`);
+      dataUsoInput.value = "";
+      esconderAvisoBloqueio();
       return;
     }
 
@@ -588,9 +633,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const resp = await fetch(url);
     const json = await resp.json();
 
-    console.log("Resposta /colaborador:", json);
-    console.log("Dados /colaborador:", json?.dados);
-
     if (json.ok && json.dados) {
       nome.value = json.dados.nome || "";
       email.value = json.dados.email || "";
@@ -603,15 +645,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const regDb = extrairRegional(json.dados);
 
-      console.log("Regional extraída:", regDb);
-
       if (regDb) {
         regionalEl.value = regDb;
         localStorage.setItem("regional", regDb);
         preencherPolos(regDb, poloEl);
         travarRegionalSelect(regionalEl);
-      } else {
-        console.warn("A regional não veio do banco ou veio com nome/formato diferente.");
       }
     }
   } catch (err) {
@@ -676,6 +714,15 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
     alert("Informe uma data de uso válida.");
     btn.disabled = false;
     btn.innerText = "Enviar Registro";
+    return;
+  }
+
+  if (!dataDentroDaJanela(dataBaseStr)) {
+    const { minDate, maxDate } = calcularJanelaPermitida();
+    alert(`Data inválida. Permitido de ${formatarDataBR(minDate)} até ${formatarDataBR(maxDate)}.`);
+    btn.disabled = false;
+    btn.innerText = "Enviar Registro";
+    document.getElementById("datauso").focus();
     return;
   }
 
