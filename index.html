@@ -331,33 +331,39 @@
 </div>
 
 <script>
+let memoryToken = null;
 
-  async function apiFetch(url, options = {}) {
-  const token = localStorage.getItem("token");
+function setToken(token) {
+  memoryToken = token;
 
-  if (!token) {
-    window.location.href = "https://coec-epb.github.io/login/";
-    return null;
-  }
+  try { localStorage.setItem("token", token); } catch {}
+  try { sessionStorage.setItem("token", token); } catch {}
+}
 
-  const resp = await fetch(url, {
+function getToken() {
+  if (memoryToken) return memoryToken;
+
+  try {
+    const t1 = localStorage.getItem("token");
+    if (t1) return t1;
+  } catch {}
+
+  try {
+    const t2 = sessionStorage.getItem("token");
+    if (t2) return t2;
+  } catch {}
+
+  return null;
+}
+ function apiFetch(url, options = {}) {
+  const token = getToken();
+
+  return fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`
     },
     ...options
   });
-
-  if (resp.status === 401) {
-    alert("Sessão expirada.");
-
-    // 🔥 NÃO usa clear
-    localStorage.removeItem("token");
-
-    window.location.href = "https://coec-epb.github.io/login/";
-    return null;
-  }
-
-  return resp;
 }
   
 async function logout() {
@@ -856,6 +862,15 @@ if (!resp) return;
     btn.innerText = "Enviar Registro";
   }
 });
+  window.addEventListener("load", () => {
+  const token = getToken();
+
+  if (!token) {
+    alert("Sessão inválida. Faça login novamente.");
+    window.location.href = "https://coec-epb.github.io/login/";
+  }
+});
+  window.TOKEN = getToken();
 </script>
    <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "ab3e837119ed4133bd616d3b06ef0e25"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
