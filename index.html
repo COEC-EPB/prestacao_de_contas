@@ -222,6 +222,12 @@
 <script>
 /* ===================== CONFIG + AUTH ===================== */
 const BASE_URL = "https://long-hall-0aaa.pedro-fillype.workers.dev";
+  
+/ 🔥 sanitiza storage contaminado
+if (localStorage.getItem("matricula") === "undefined") {
+  localStorage.removeItem("matricula");
+}
+
 
 let memoryToken = null;
 
