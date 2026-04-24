@@ -367,7 +367,7 @@ function getToken() {
 }
   
 async function logout() {
-  const token = localStorage.getItem("token");
+  const token = getToken();
 
   await fetch(`${BASE_URL}/logout`, {
     method: "POST",
@@ -657,13 +657,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   tipoRefeicaoEl.addEventListener("change", atualizarObrigatoriedadeObservacao);
   atualizarObrigatoriedadeObservacao();
 
-  const matriculaSalva = localStorage.getItem("matricula");
+  const resp = await apiFetch(`${BASE_URL}/me`);
 
-  if (!matriculaSalva) {
-    alert("Matrícula não encontrada. Faça login novamente.");
-    window.location.href = "https://coec-epb.github.io/login/";
-    return;
-  }
+if (!resp) return;
+
+const data = await resp.json();
+
+if (!data.ok) {
+  alert("Sessão inválida.");
+  window.location.href = "https://coec-epb.github.io/login/";
+  return;
+}
+
+const user = data.user;
+
+document.getElementById("matricula").value = user.matricula;
+document.getElementById("nome").value = user.nome;
+document.getElementById("email").value = user.email;
+
+localStorage.setItem("matricula", user.matricula);
 
   matricula.value = matriculaSalva;
   matricula.readOnly = true;
@@ -862,16 +874,25 @@ if (!resp) return;
     btn.innerText = "Enviar Registro";
   }
 });
-  window.addEventListener("load", () => {
-  const token = getToken();
+   // 🔥 COLOCA AQUI (FINAL DO SCRIPT)
+  window.addEventListener("load", async () => {
+    const token = getToken();
 
-  if (!token) {
-    alert("Sessão inválida. Faça login novamente.");
-    window.location.href = "https://coec-epb.github.io/login/";
-  }
-});
+    if (!token) {
+      window.location.href = "https://coec-epb.github.io/login/";
+      return;
+    }
+
+    const resp = await apiFetch(`${BASE_URL}/me`);
+
+    if (!resp || resp.status === 401) {
+      localStorage.removeItem("token");
+      window.location.href = "https://coec-epb.github.io/login/";
+    }
+  });
+
   window.TOKEN = getToken();
-</script>
+  </script>
    <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "ab3e837119ed4133bd616d3b06ef0e25"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
