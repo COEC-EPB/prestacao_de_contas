@@ -8,98 +8,209 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
 <style>
-  .form-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-bottom:14px; }
-  .form-grid label { font-weight:600; margin-bottom:4px; display:block; }
-  @media (max-width:768px){ .form-grid{ grid-template-columns:1fr; } }
-
-  :root{
-    --energisa-blue:#0097CE;
-    --energisa-blue-dark:#0079a6;
-    --energisa-orange:#F36F21;
-    --bg-soft:#eef6fa;
-    --bg-white:#ffffff;
-    --text-dark:#333;
-    --danger-bg:#fff3f3;
-    --danger-border:#f1b5b5;
-    --danger-text:#b3261e;
-  }
-  *{ box-sizing:border-box; }
-  body{ font-family:"Segoe UI",Roboto,sans-serif; background:var(--bg-soft); margin:0; }
-
-  .header{
-    background:var(--energisa-blue); color:#fff; padding:16px 24px;
-    display:flex; justify-content:space-between; align-items:center;
-    box-shadow:0 4px 12px rgba(0,0,0,0.15);
-  }
-  .header h2{ margin:0; font-weight:700; letter-spacing:1px; }
-
-  .logout-btn{
-    background:var(--energisa-orange); border:none; padding:10px 14px;
-    border-radius:8px; color:#fff; cursor:pointer; font-weight:600;
-  }
-  .logout-btn:hover{ background:#d65c18; }
-
-  .card{
-    max-width:900px; margin:30px auto; padding:28px; background:var(--bg-white);
-    border-radius:14px; box-shadow:0 6px 26px rgba(0,0,0,0.10);
-    border-top:6px solid var(--energisa-orange);
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-bottom: 14px;
   }
 
-  h1{
-    text-align:center; color:var(--energisa-blue-dark);
-    margin-bottom:20px; font-size:26px; font-weight:800;
+  .form-grid label {
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
   }
 
-  form{ display:grid; gap:15px; }
-  label{ font-weight:600; margin-bottom:4px; }
-
-  input,select,textarea{
-    width:100%; padding:12px; border-radius:8px; border:1px solid #cfd8dc;
-    font-size:15px; background:#fdfdfd;
+  @media (max-width: 768px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
   }
-  input:focus,select:focus,textarea:focus{
-    border-color:var(--energisa-blue);
-    box-shadow:0 0 0 2px rgba(0,151,206,0.25);
-    outline:none;
+
+  :root {
+    --energisa-blue: #0097CE;
+    --energisa-blue-dark: #0079a6;
+    --energisa-orange: #F36F21;
+    --bg-soft: #eef6fa;
+    --bg-white: #ffffff;
+    --text-dark: #333;
+    --danger-bg: #fff3f3;
+    --danger-border: #f1b5b5;
+    --danger-text: #b3261e;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: "Segoe UI", Roboto, sans-serif;
+    background: var(--bg-soft);
+    margin: 0;
+  }
+
+  .header {
+    background: var(--energisa-blue);
+    color: white;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .header h2 {
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .logout-btn {
+    background: var(--energisa-orange);
+    border: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .logout-btn:hover {
+    background: #d65c18;
+  }
+
+  .card {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 28px;
+    background: var(--bg-white);
+    border-radius: 14px;
+    box-shadow: 0 6px 26px rgba(0,0,0,0.10);
+    border-top: 6px solid var(--energisa-orange);
+  }
+
+  h1 {
+    text-align: center;
+    color: var(--energisa-blue-dark);
+    margin-bottom: 20px;
+    font-size: 26px;
+    font-weight: 800;
+  }
+
+  form {
+    display: grid;
+    gap: 15px;
+  }
+
+  label {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #cfd8dc;
+    font-size: 15px;
+    background: #fdfdfd;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--energisa-blue);
+    box-shadow: 0 0 0 2px rgba(0,151,206,0.25);
+    outline: none;
   }
 
   #regional:disabled,
   #matricula[readonly],
   #nome[readonly],
   #email[readonly],
-  #geo[readonly]{
-    background:#e9ecef; cursor:not-allowed; color:#495057;
+  #geo[readonly] {
+    background: #e9ecef;
+    cursor: not-allowed;
+    color: #495057;
   }
 
-  .row{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
-  @media(max-width:720px){ .row{ grid-template-columns:1fr; } }
-
-  button{
-    background:var(--energisa-blue); color:#fff; border:none; padding:14px;
-    font-size:16px; font-weight:700; border-radius:10px; cursor:pointer;
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
   }
-  button:hover{ background:var(--energisa-blue-dark); }
 
-  .small{ padding:10px; font-size:13px; background:var(--energisa-orange); }
-  .small:hover{ background:#d85e1c; }
-
-  .dashboard-btn{
-    display:block; background:var(--energisa-blue-dark); color:#fff; text-align:center;
-    padding:13px; margin-top:14px; border-radius:10px; font-weight:700; text-decoration:none;
+  @media(max-width: 720px) {
+    .row {
+      grid-template-columns: 1fr;
+    }
   }
-  .dashboard-btn:hover{ background:#005f85; }
 
-  .muted{ color:#666; font-size:13px; text-align:center; margin-top:10px; }
-
-  .bloqueio-box{
-    display:none; background:var(--danger-bg); border:1px solid var(--danger-border);
-    color:var(--danger-text); padding:14px; border-radius:10px; font-size:14px; line-height:1.5;
+  button {
+    background: var(--energisa-blue);
+    color: white;
+    border: none;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
   }
-  .bloqueio-box.show{ display:block; }
-  .bloqueio-box strong{ display:block; margin-bottom:6px; }
+
+  button:hover {
+    background: var(--energisa-blue-dark);
+  }
+
+  .small {
+    padding: 10px;
+    font-size: 13px;
+    background: var(--energisa-orange);
+  }
+
+  .small:hover {
+    background: #d85e1c;
+  }
+
+  .dashboard-btn {
+    display: block;
+    background: var(--energisa-blue-dark);
+    color: white;
+    text-align: center;
+    padding: 13px;
+    margin-top: 14px;
+    border-radius: 10px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .dashboard-btn:hover {
+    background: #005f85;
+  }
+
+  .muted {
+    color: #666;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .bloqueio-box {
+    display: none;
+    background: var(--danger-bg);
+    border: 1px solid var(--danger-border);
+    color: var(--danger-text);
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .bloqueio-box.show {
+    display: block;
+  }
+
+  .bloqueio-box strong {
+    display: block;
+    margin-bottom: 6px;
+  }
 </style>
 </head>
-
 <body>
 
 <div class="header">
@@ -220,80 +331,11 @@
 </div>
 
 <script>
-/* ===================== CONFIG + AUTH ===================== */
-const BASE_URL = "https://long-hall-0aaa.pedro-fillype.workers.dev";
-
-// 🔥 sanitiza storage contaminado
-if (localStorage.getItem("matricula") === "undefined") {
-  localStorage.removeItem("matricula");
-}
-
-let memoryToken = null;
-
-function setToken(token){
-  memoryToken = token;
-  try { localStorage.setItem("token", token); } catch {}
-  try { sessionStorage.setItem("token", token); } catch {}
-}
-
-function getToken(){
-  if (memoryToken) return memoryToken;
-  try { const t1 = localStorage.getItem("token"); if (t1) return t1; } catch {}
-  try { const t2 = sessionStorage.getItem("token"); if (t2) return t2; } catch {}
-  return null;
-}
-
-function clearSession(){
-  try { localStorage.removeItem("token"); } catch {}
-  try { localStorage.removeItem("usuarioLogado"); } catch {}
-  try { localStorage.removeItem("matricula"); } catch {}
-  try { localStorage.removeItem("regional"); } catch {}
-  try { sessionStorage.clear(); } catch {}
-  memoryToken = null;
-}
-
-function apiFetch(url, options = {}){
-  const token = getToken();
-  const headers = new Headers(options.headers || {});
-  if (token) headers.set("Authorization", `Bearer ${token}`);
-  return fetch(url, { ...options, headers });
-}
-
-async function checkAuthOrRedirect(){
-  const token = getToken();
-  if (!token){
-    window.location.href = "https://coec-epb.github.io/login/";
-    return null;
-  }
-
-  const resp = await apiFetch(`${BASE_URL}/me`);
-  if (!resp || resp.status === 401){
-    clearSession();
-    window.location.href = "https://coec-epb.github.io/login/";
-    return null;
-  }
-
-  const data = await resp.json().catch(() => null);
-  if (!data || !data.ok || !data.user){
-    clearSession();
-    window.location.href = "https://coec-epb.github.io/login/";
-    return null;
-  }
-
-  localStorage.setItem("usuarioLogado", "sim");
-  localStorage.setItem("matricula", data.user.matricula);
-
-  return data.user;
-}
-
-/* ===================== LOGOUT ===================== */
-async function logout(){
-  try { await apiFetch(`${BASE_URL}/logout`, { method:"POST" }); } catch {}
-  clearSession();
+function logout() {
+  localStorage.clear();
   window.location.href = "https://coec-epb.github.io/login/";
 }
 
-/* ===================== REGRAS / UTIL ===================== */
 const MAP_POLOS = {
   LESTE: ["João Pessoa", "Itabaiana", "Mamanguape"],
   CENTRO: ["Borborema", "Campina Grande", "Monteiro", "Esperança", "Guarabira"],
@@ -306,7 +348,7 @@ const TODOS_POLOS = [
   "Catolé do Rocha", "Itaporanga", "Patos", "Sousa"
 ];
 
-function preencherPolos(regional, selectPolo){
+function preencherPolos(regional, selectPolo) {
   if (!selectPolo) return;
 
   const reg = normalizarRegional(regional);
@@ -331,21 +373,21 @@ function preencherPolos(regional, selectPolo){
   });
 }
 
-function travarRegionalSelect(sel){
+function travarRegionalSelect(sel) {
   if (!sel) return;
   sel.disabled = true;
   sel.style.background = "#e9ecef";
   sel.style.cursor = "not-allowed";
 }
 
-function destravarRegionalSelect(sel){
+function destravarRegionalSelect(sel) {
   if (!sel) return;
   sel.disabled = false;
   sel.style.background = "";
   sel.style.cursor = "";
 }
 
-function normalizarRegional(valor){
+function normalizarRegional(valor) {
   const v = String(valor || "")
     .trim()
     .normalize("NFD")
@@ -358,8 +400,9 @@ function normalizarRegional(valor){
   return "";
 }
 
-function extrairRegional(dados){
+function extrairRegional(dados) {
   if (!dados || typeof dados !== "object") return "";
+
   return normalizarRegional(
     dados.regional ??
     dados.Regional ??
@@ -373,11 +416,11 @@ function extrairRegional(dados){
   );
 }
 
-function atualizarObrigatoriedadeObservacao(){
+function atualizarObrigatoriedadeObservacao() {
   const tipo = document.getElementById("tiporefeicao").value.trim().toUpperCase();
   const obs = document.getElementById("observacao");
 
-  if (tipo === "EXTRA"){
+  if (tipo === "EXTRA") {
     obs.required = true;
     obs.placeholder = "Observação obrigatória para refeição EXTRA";
     obs.style.borderColor = "#F36F21";
@@ -388,67 +431,67 @@ function atualizarObrigatoriedadeObservacao(){
   }
 }
 
-function toISODate(d){
+function toISODate(d) {
   const ano = d.getFullYear();
-  const mes = String(d.getMonth()+1).padStart(2,"0");
-  const dia = String(d.getDate()).padStart(2,"0");
+  const mes = String(d.getMonth() + 1).padStart(2, "0");
+  const dia = String(d.getDate()).padStart(2, "0");
   return `${ano}-${mes}-${dia}`;
 }
 
-function formatarDataBR(data){
-  const dia = String(data.getDate()).padStart(2,"0");
-  const mes = String(data.getMonth()+1).padStart(2,"0");
+function formatarDataBR(data) {
+  const dia = String(data.getDate()).padStart(2, "0");
+  const mes = String(data.getMonth() + 1).padStart(2, "0");
   const ano = data.getFullYear();
   return `${dia}/${mes}/${ano}`;
 }
 
-function calcularJanelaPermitida(){
+function calcularJanelaPermitida() {
   const hoje = new Date();
-  hoje.setHours(0,0,0,0);
+  hoje.setHours(0, 0, 0, 0);
 
   const maxDate = new Date(hoje);
   maxDate.setDate(maxDate.getDate() + 3);
 
   let minDate;
 
-  if (hoje.getDate() <= 10){
+  if (hoje.getDate() <= 10) {
     minDate = new Date(hoje);
     minDate.setDate(minDate.getDate() - 35);
   } else {
     minDate = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-    minDate.setHours(0,0,0,0);
+    minDate.setHours(0, 0, 0, 0);
   }
 
   return { hoje, minDate, maxDate };
 }
 
-function dataDentroDaJanela(dataISO){
+function dataDentroDaJanela(dataISO) {
   if (!dataISO) return false;
 
   const { minDate, maxDate } = calcularJanelaPermitida();
   const sel = new Date(dataISO + "T00:00:00");
-  sel.setHours(0,0,0,0);
+  sel.setHours(0, 0, 0, 0);
 
   return sel >= minDate && sel <= maxDate;
 }
 
-function mostrarAvisoBloqueio(justificativa, datausoBR){
+function mostrarAvisoBloqueio(justificativa, datauso) {
   const box = document.getElementById("bloqueioAviso");
   box.innerHTML = `
     <strong><i class="bi bi-lock-fill"></i> Dia bloqueado para lançamento</strong>
-    Data: ${datausoBR}<br>
+    Data: ${datauso}<br>
     Justificativa: ${justificativa}
   `;
   box.classList.add("show");
 }
 
-function esconderAvisoBloqueio(){
+function esconderAvisoBloqueio() {
   const box = document.getElementById("bloqueioAviso");
   box.innerHTML = "";
   box.classList.remove("show");
 }
 
-async function verificarBloqueioData(exibirAlert = true, limparCampo = false){
+async function verificarBloqueioData(exibirAlert = true, limparCampo = false) {
   const matricula = document.getElementById("matricula").value.trim();
   const datauso = document.getElementById("datauso").value.trim();
 
@@ -456,32 +499,22 @@ async function verificarBloqueioData(exibirAlert = true, limparCampo = false){
 
   if (!matricula || !datauso) return true;
 
-  try{
-    const resp = await apiFetch(
-      `${BASE_URL}/verificar-bloqueio?matricula=${encodeURIComponent(matricula)}&datauso=${encodeURIComponent(datauso)}`
+  try {
+    const resp = await fetch(
+      `https://long-hall-0aaa.pedro-fillype.workers.dev/verificar-bloqueio?matricula=${encodeURIComponent(matricula)}&datauso=${encodeURIComponent(datauso)}`
     );
-
-    if (!resp) return true;
-
-    if (resp.status === 401){
-      clearSession();
-      window.location.href = "https://coec-epb.github.io/login/";
-      return false;
-    }
 
     const json = await resp.json();
 
-    if (json.ok && json.bloqueado){
+    if (json.ok && json.bloqueado) {
       const justificativa = json?.bloqueio?.justificativa || "Sem justificativa informada.";
-      const datausoBR = datauso.split("-").reverse().join("/");
+      mostrarAvisoBloqueio(justificativa, datauso.split("-").reverse().join("/"));
 
-      mostrarAvisoBloqueio(justificativa, datausoBR);
-
-      if (exibirAlert){
+      if (exibirAlert) {
         alert(`Este dia está bloqueado para lançamento.\n\nJustificativa: ${justificativa}`);
       }
 
-      if (limparCampo){
+      if (limparCampo) {
         document.getElementById("datauso").value = "";
       }
 
@@ -489,24 +522,22 @@ async function verificarBloqueioData(exibirAlert = true, limparCampo = false){
     }
 
     return true;
-
-  } catch(err){
+  } catch (err) {
     console.error("Erro ao verificar bloqueio:", err);
     return true;
   }
 }
 
-/* ===================== INIT ===================== */
 document.addEventListener("DOMContentLoaded", async () => {
   const dataUsoInput = document.getElementById("datauso");
-  const nomeEl = document.getElementById("nome");
-  const emailEl = document.getElementById("email");
-  const matriculaEl = document.getElementById("matricula");
+  const nome = document.getElementById("nome");
+  const email = document.getElementById("email");
+  const matricula = document.getElementById("matricula");
   const regionalEl = document.getElementById("regional");
   const poloEl = document.getElementById("polo");
   const tipoRefeicaoEl = document.getElementById("tiporefeicao");
 
-  function aplicarRegraData(){
+  function aplicarRegraData() {
     const { minDate, maxDate } = calcularJanelaPermitida();
     dataUsoInput.min = toISODate(minDate);
     dataUsoInput.max = toISODate(maxDate);
@@ -518,22 +549,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   dataUsoInput.addEventListener("input", async () => {
     const { minDate, maxDate } = aplicarRegraData();
 
-    if (!dataUsoInput.value){
+    if (!dataUsoInput.value) {
       esconderAvisoBloqueio();
       return;
     }
 
     const sel = new Date(dataUsoInput.value + "T00:00:00");
-    sel.setHours(0,0,0,0);
+    sel.setHours(0, 0, 0, 0);
 
-    if (sel < minDate){
+    if (sel < minDate) {
       alert(`A data não pode ser anterior a ${formatarDataBR(minDate)}.`);
       dataUsoInput.value = "";
       esconderAvisoBloqueio();
       return;
     }
 
-    if (sel > maxDate){
+    if (sel > maxDate) {
       alert(`A data não pode ser maior que ${formatarDataBR(maxDate)}.`);
       dataUsoInput.value = "";
       esconderAvisoBloqueio();
@@ -546,22 +577,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   dataUsoInput.addEventListener("change", async () => {
     const { minDate, maxDate } = aplicarRegraData();
 
-    if (!dataUsoInput.value){
+    if (!dataUsoInput.value) {
       esconderAvisoBloqueio();
       return;
     }
 
     const sel = new Date(dataUsoInput.value + "T00:00:00");
-    sel.setHours(0,0,0,0);
+    sel.setHours(0, 0, 0, 0);
 
-    if (sel < minDate){
+    if (sel < minDate) {
       alert(`A data não pode ser anterior a ${formatarDataBR(minDate)}.`);
       dataUsoInput.value = "";
       esconderAvisoBloqueio();
       return;
     }
 
-    if (sel > maxDate){
+    if (sel > maxDate) {
       alert(`A data não pode ser maior que ${formatarDataBR(maxDate)}.`);
       dataUsoInput.value = "";
       esconderAvisoBloqueio();
@@ -574,23 +605,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   tipoRefeicaoEl.addEventListener("change", atualizarObrigatoriedadeObservacao);
   atualizarObrigatoriedadeObservacao();
 
-  // valida sessão e carrega dados
-  const user = await checkAuthOrRedirect();
-  if (!user) return;
+  const matriculaSalva = localStorage.getItem("matricula");
 
-  const matriculaSalva = user.matricula;
+  if (!matriculaSalva) {
+    alert("Matrícula não encontrada. Faça login novamente.");
+    window.location.href = "https://coec-epb.github.io/login/";
+    return;
+  }
 
-  matriculaEl.value = matriculaSalva;
-  nomeEl.value = user.nome || "";
-  emailEl.value = user.email || "";
-
-  matriculaEl.readOnly = true;
-  matriculaEl.style.background = "#e9ecef";
+  matricula.value = matriculaSalva;
+  matricula.readOnly = true;
+  matricula.style.background = "#e9ecef";
 
   preencherPolos("", poloEl);
 
   const regLS = normalizarRegional(localStorage.getItem("regional") || "");
-  if (regLS){
+  if (regLS) {
     regionalEl.value = regLS;
     preencherPolos(regLS, poloEl);
     travarRegionalSelect(regionalEl);
@@ -598,45 +628,40 @@ document.addEventListener("DOMContentLoaded", async () => {
     destravarRegionalSelect(regionalEl);
   }
 
-  // busca cadastro no endpoint /colaborador e ajusta regional
-  try{
-    const resp = await apiFetch(`${BASE_URL}/colaborador?matricula=${encodeURIComponent(matriculaSalva)}`);
-    if (!resp) return;
-
+  try {
+    const url = `https://long-hall-0aaa.pedro-fillype.workers.dev/colaborador?matricula=${encodeURIComponent(matriculaSalva)}`;
+    const resp = await fetch(url);
     const json = await resp.json();
 
-    if (json.ok && json.dados){
-      if (json.dados.nome){
-        nomeEl.value = json.dados.nome;
-        nomeEl.readOnly = true;
-        nomeEl.style.background = "#e9ecef";
-      }
+    if (json.ok && json.dados) {
+      nome.value = json.dados.nome || "";
+      email.value = json.dados.email || "";
 
-      if (json.dados.email){
-        emailEl.value = json.dados.email;
-        emailEl.readOnly = true;
-        emailEl.style.background = "#e9ecef";
-      }
+      nome.readOnly = true;
+      email.readOnly = true;
+
+      nome.style.background = "#e9ecef";
+      email.style.background = "#e9ecef";
 
       const regDb = extrairRegional(json.dados);
-      if (regDb){
+
+      if (regDb) {
         regionalEl.value = regDb;
         localStorage.setItem("regional", regDb);
         preencherPolos(regDb, poloEl);
         travarRegionalSelect(regionalEl);
       }
     }
-  } catch(err){
+  } catch (err) {
     console.error("Erro ao buscar dados:", err);
   }
 });
 
-/* ===================== GEO ===================== */
 document.getElementById("btnGeo").addEventListener("click", () => {
   const btnGeo = document.getElementById("btnGeo");
   const geo = document.getElementById("geo");
 
-  if (!navigator.geolocation){
+  if (!navigator.geolocation) {
     alert("Seu navegador não suporta geolocalização.");
     return;
   }
@@ -654,13 +679,11 @@ document.getElementById("btnGeo").addEventListener("click", () => {
     () => {
       alert("Não foi possível capturar a localização.");
       btnGeo.innerText = "Obter Localização";
-      btnGeo.style.background = "";
     },
-    { enableHighAccuracy:true, timeout:10000 }
+    { enableHighAccuracy: true, timeout: 10000 }
   );
 });
 
-/* ===================== SUBMIT ===================== */
 document.getElementById("addForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -673,14 +696,13 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
   const tipoRefeicao = get("tiporefeicao").toUpperCase();
   const observacao = get("observacao");
   const dataBaseStr = get("datauso");
-
   const regionalFixa = normalizarRegional(
     localStorage.getItem("regional") ||
     document.getElementById("regional").value ||
     ""
   );
 
-  if (tipoRefeicao === "EXTRA" && !observacao){
+  if (tipoRefeicao === "EXTRA" && !observacao) {
     alert("Para refeição EXTRA, a observação é obrigatória.");
     btn.disabled = false;
     btn.innerText = "Enviar Registro";
@@ -688,14 +710,14 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
     return;
   }
 
-  if (!dataBaseStr){
+  if (!dataBaseStr) {
     alert("Informe uma data de uso válida.");
     btn.disabled = false;
     btn.innerText = "Enviar Registro";
     return;
   }
 
-  if (!dataDentroDaJanela(dataBaseStr)){
+  if (!dataDentroDaJanela(dataBaseStr)) {
     const { minDate, maxDate } = calcularJanelaPermitida();
     alert(`Data inválida. Permitido de ${formatarDataBR(minDate)} até ${formatarDataBR(maxDate)}.`);
     btn.disabled = false;
@@ -704,7 +726,7 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
     return;
   }
 
-  if (!regionalFixa){
+  if (!regionalFixa) {
     alert("A regional não foi carregada. Verifique o cadastro do colaborador.");
     btn.disabled = false;
     btn.innerText = "Enviar Registro";
@@ -712,13 +734,13 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
   }
 
   const dataLiberada = await verificarBloqueioData(true, false);
-  if (!dataLiberada){
+  if (!dataLiberada) {
     btn.disabled = false;
     btn.innerText = "Enviar Registro";
     return;
   }
 
-  try{
+  try {
     const payload = {
       nome: get("nome"),
       email: get("email"),
@@ -737,42 +759,35 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
     };
 
     const fd = new FormData();
-    for (const [k,v] of Object.entries(payload)) fd.append(k, v);
-
-    const resp = await apiFetch(`${BASE_URL}/submit`, { method:"POST", body: fd });
-
-    if (!resp){
-      alert("Falha de rede ao enviar.");
-      btn.disabled = false;
-      btn.innerText = "Enviar Registro";
-      return;
+    for (const [k, v] of Object.entries(payload)) {
+      fd.append(k, v);
     }
 
-    if (resp.status === 401){
-      clearSession();
-      alert("Sessão expirada. Faça login novamente.");
-      window.location.href = "https://coec-epb.github.io/login/";
-      return;
-    }
+    const resp = await fetch(
+      "https://long-hall-0aaa.pedro-fillype.workers.dev/submit",
+      { method: "POST", body: fd }
+    );
 
     let result = {};
-    try { result = await resp.json(); } catch {}
+    try {
+      result = await resp.json();
+    } catch {}
 
-    if (resp.status === 409){
+    if (resp.status === 409) {
       alert("Já existe uma prestação registrada para esta data.");
       btn.disabled = false;
       btn.innerText = "Enviar Registro";
       return;
     }
 
-    if (resp.status === 403){
+    if (resp.status === 403) {
       alert(result.error || "Este dia está bloqueado para lançamento.");
       btn.disabled = false;
       btn.innerText = "Enviar Registro";
       return;
     }
 
-    if (!resp.ok || result.ok === false){
+    if (!resp.ok || result.ok === false) {
       alert(result.error || "Erro ao enviar registro.");
       btn.disabled = false;
       btn.innerText = "Enviar Registro";
@@ -782,19 +797,13 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
     alert("✅ Registro enviado com sucesso.");
     setTimeout(() => location.reload(), 500);
 
-  } catch(err){
+  } catch (err) {
     alert("Erro inesperado: " + err.message);
     btn.disabled = false;
     btn.innerText = "Enviar Registro";
   }
 });
-
-window.TOKEN = getToken();
 </script>
-
-<!-- Cloudflare Web Analytics -->
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js"
-  data-cf-beacon='{"token": "ab3e837119ed4133bd616d3b06ef0e25"}'></script>
-
+   <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "ab3e837119ed4133bd616d3b06ef0e25"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
