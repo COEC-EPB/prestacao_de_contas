@@ -331,6 +331,7 @@
 </div>
 
 <script>
+  const BASE_URL = "https://long-hall-0aaa.pedro-fillype.workers.dev";
 let memoryToken = null;
 
 function setToken(token) {
@@ -355,16 +356,19 @@ function getToken() {
 
   return null;
 }
- function apiFetch(url, options = {}) {
+ 
+function apiFetch(url, options = {}) {
   const token = getToken();
 
+  const headers = new Headers(options.headers || {});
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+
   return fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    },
-    ...options
+    ...options,
+    headers
   });
 }
+
   
 async function logout() {
   const token = getToken();
@@ -670,14 +674,22 @@ if (!data.ok) {
 }
 
 const user = data.user;
+  
+const matriculaSalva = user.matricula; // ✅ agora existe
 
-document.getElementById("matricula").value = user.matricula;
+
+
+document.getElementById("matricula").value = matriculaSalva;
 document.getElementById("nome").value = user.nome;
 document.getElementById("email").value = user.email;
 
-localStorage.setItem("matricula", user.matricula);
 
-  matricula.value = matriculaSalva;
+
+localStorage.setItem("matricula", matriculaSalva);
+localStorage.setItem("usuarioLogado", "sim");
+
+
+  matricula.value = matriculaSalva
   matricula.readOnly = true;
   matricula.style.background = "#e9ecef";
 
@@ -875,21 +887,31 @@ if (!resp) return;
   }
 });
    // 🔥 COLOCA AQUI (FINAL DO SCRIPT)
-  window.addEventListener("load", async () => {
-    const token = getToken();
+  async function checkAuthOrRedirect() {
+  const token = getToken();
+  if (!token) {
+    window.location.href = "https://coec-epb.github.io/login/";
+    return false;
+  }
 
-    if (!token) {
-      window.location.href = "https://coec-epb.github.io/login/";
-      return;
-    }
+  const resp = await apiFetch(`${BASE_URL}/me`);
+  if (!resp || resp.status === 401) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("usuarioLogado");
+    sessionStorage.clear();
+    window.location.href = "https://coec-epb.github.io/login/";
+    return false;
+  }
+  return true;
+}
 
-    const resp = await apiFetch(`${BASE_URL}/me`);
+window.addEventListener("load", async () => {
+  const ok = await checkAuthOrRedirect();
+  if (!ok) return;
 
-    if (!resp || resp.status === 401) {
-      localStorage.removeItem("token");
-      window.location.href = "https://coec-epb.github.io/login/";
-    }
-  });
+  // segue a página normalmente...
+});
+
 
   window.TOKEN = getToken();
   </script>
