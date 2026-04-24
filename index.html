@@ -345,7 +345,8 @@
   if (resp.status === 401) {
     alert("Sessão expirada. Faça login novamente.");
 
-    localStorage.clear();
+    localStorage.removeItem("token");
+    localStorage.removeItem("usuarioLogado");
     window.location.href = "https://coec-epb.github.io/login/";
     return null;
   }
@@ -362,7 +363,8 @@ async function logout() {
     }
   });
 
-  localStorage.clear();
+  localStorage.removeItem("token");
+  localStorage.removeItem("usuarioLogado");
   window.location.href = "https://coec-epb.github.io/login/";
 }
 
