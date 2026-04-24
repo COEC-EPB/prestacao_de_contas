@@ -501,14 +501,22 @@ async function verificarBloqueioData(exibirAlert = true, limparCampo = false) {
 
   try {
     const resp = await fetch(
-      `https://long-hall-0aaa.pedro-fillype.workers.dev/verificar-bloqueio?matricula=${encodeURIComponent(matricula)}&datauso=${encodeURIComponent(datauso)}`
+      `https://long-hall-0aaa.pedro-fillype.workers.dev/verificar-bloqueio?matricula=${encodeURIComponent(matricula)}&datauso=${encodeURIComponent(datauso)}`,
+      {
+        method: "GET",
+        credentials: "include" // 🔥 ESSENCIAL
+      }
     );
 
     const json = await resp.json();
 
     if (json.ok && json.bloqueado) {
       const justificativa = json?.bloqueio?.justificativa || "Sem justificativa informada.";
-      mostrarAvisoBloqueio(justificativa, datauso.split("-").reverse().join("/"));
+
+      mostrarAvisoBloqueio(
+        justificativa,
+        datauso.split("-").reverse().join("/")
+      );
 
       if (exibirAlert) {
         alert(`Este dia está bloqueado para lançamento.\n\nJustificativa: ${justificativa}`);
@@ -522,6 +530,7 @@ async function verificarBloqueioData(exibirAlert = true, limparCampo = false) {
     }
 
     return true;
+
   } catch (err) {
     console.error("Erro ao verificar bloqueio:", err);
     return true;
@@ -630,7 +639,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   try {
     const url = `https://long-hall-0aaa.pedro-fillype.workers.dev/colaborador?matricula=${encodeURIComponent(matriculaSalva)}`;
-    const resp = await fetch(url);
+    const resp = await fetch(url, {
+  credentials: "include"
+});
     const json = await resp.json();
 
     if (json.ok && json.dados) {
