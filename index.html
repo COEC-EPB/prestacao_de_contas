@@ -335,6 +335,11 @@
   async function apiFetch(url, options = {}) {
   const token = localStorage.getItem("token");
 
+  if (!token) {
+    window.location.href = "https://coec-epb.github.io/login/";
+    return null;
+  }
+
   const resp = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`
@@ -343,16 +348,18 @@
   });
 
   if (resp.status === 401) {
-    alert("Sessão expirada. Faça login novamente.");
+    alert("Sessão expirada.");
 
+    // 🔥 NÃO usa clear
     localStorage.removeItem("token");
-    localStorage.removeItem("usuarioLogado");
+
     window.location.href = "https://coec-epb.github.io/login/";
     return null;
   }
 
   return resp;
 }
+  
 async function logout() {
   const token = localStorage.getItem("token");
 
